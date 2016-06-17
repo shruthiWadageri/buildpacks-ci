@@ -17,14 +17,14 @@ resources:
     type: pool
     source:
       branch: resource-pools
-      pool: cf-edge-environments
+      pool: cf-edge-azure-environments
       private_key: {{buildpacks-ci-private-key}}
       uri: git@github.com:cloudfoundry/buildpacks-ci.git
   - name: cf-lts-environments
     type: pool
     source:
       branch: resource-pools
-      pool: cf-lts-environments
+      pool: cf-lts-azure-environments
       private_key: {{buildpacks-ci-private-key}}
       uri: git@github.com:cloudfoundry/buildpacks-ci.git
 

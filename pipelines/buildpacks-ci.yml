@@ -31,12 +31,3 @@ jobs:
           GITHUB_PASSWORD: {{github-password}}
           GITHUB_ACCESS_TOKEN: {{buildpacks-github-token}}
         privileged: true
-      - put: ci-master
-        params:
-          repository: buildpacks-ci
-          rebase: true
-      - put: concourse2tracker
-        params:
-          git_path: buildpacks-ci
-          project_id: {{cf-buildpacks-public-tracker-id}}
-          api_token: {{pivotal-tracker-api-token}}
