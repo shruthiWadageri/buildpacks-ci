@@ -1,4 +1,7 @@
 ---
+- 'USN-3020-1: Linux kernel (Vivid HWE) vulnerabilities'
+- 'USN-3019-1: Linux kernel (Utopic HWE) vulnerabilities'
+- 'USN-3018-1: Linux kernel vulnerabilities'
 - 'USN-3016-4: Linux kernel (Xenial HWE) vulnerabilities'
 - 'USN-3017-3: Linux kernel (Wily HWE) vulnerabilities'
 - 'USN-3014-1: Spice vulnerabilities'
