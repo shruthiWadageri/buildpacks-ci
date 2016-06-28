@@ -1,2 +1,4 @@
 ---
-python: []
+python:
+  - version: 2.7.12
+    md5: 88d61f82e3616a4be952828b3694109d
