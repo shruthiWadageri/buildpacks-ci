@@ -1,2 +1,4 @@
 ---
-glide: []
+glide:
+- version: 0.10.2
+  sha256: f0153d88f12fb36419cb616d9922ae95b274ac7c9ed9b043701f187da5834eac
