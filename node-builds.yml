@@ -1,2 +1,3 @@
 ---
-node: []
+node: "this file was edited in order to be reverted. This was necessary because we wedged Concourse into a merge conflict it could not resolve.
+  By editing this file, and then reverting the edit, Git should have a refreshed POV."
