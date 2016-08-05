@@ -4,12 +4,12 @@ require 'fileutils'
 
 class ConcourseBinaryBuilder
 
-  attr_reader :binary_name, :git_ssh_key, :buildpacks_ci_dir, :binary_builder_dir
+  attr_reader :binary_name, :git_ssh_key, :task_root_dir, :binary_builder_dir
 
-  def initialize(binary_name, buildpacks_ci_dir, binary_builder_dir, git_ssh_key)
+  def initialize(binary_name, task_root_dir, binary_builder_dir, git_ssh_key)
     @git_ssh_key = git_ssh_key
     @binary_name = binary_name
-    @buildpacks_ci_dir = buildpacks_ci_dir
+    @task_root_dir = task_root_dir
     @binary_builder_dir = binary_builder_dir
   end
 
@@ -20,11 +20,11 @@ class ConcourseBinaryBuilder
 # built.yml
 
 #get latest version of <binary>-built.yml
-    built_dir = File.join(buildpacks_ci_dir, 'built-yaml')
+    built_dir = File.join(buildpacks_ci_dir, '..' , 'built-yaml')
     built_file = File.join(built_dir, "#{binary_name}-built.yml")
     add_ssh_key_and_update(built_dir, 'binary-built-output')
 
-    builds_dir = File.join(buildpacks_ci_dir, 'builds-yaml')
+    builds_dir = File.join(buildpacks_ci_dir, '..' ,'builds-yaml')
     builds_file = File.join(builds_dir, "#{binary_name}-builds.yml")
     builds_yaml_artifacts = File.join(buildpacks_ci_dir, 'builds-yaml-artifacts')
 
