@@ -20,13 +20,13 @@ class ConcourseBinaryBuilder
 # built.yml
 
 #get latest version of <binary>-built.yml
-    built_dir = File.join(buildpacks_ci_dir, '..' , 'built-yaml')
+    built_dir = File.join(task_root_dir, 'built-yaml')
     built_file = File.join(built_dir, "#{binary_name}-built.yml")
     add_ssh_key_and_update(built_dir, 'binary-built-output')
 
-    builds_dir = File.join(buildpacks_ci_dir, '..' ,'builds-yaml')
+    builds_dir = File.join(task_root_dir ,'builds-yaml')
     builds_file = File.join(builds_dir, "#{binary_name}-builds.yml")
-    builds_yaml_artifacts = File.join(buildpacks_ci_dir, 'builds-yaml-artifacts')
+    builds_yaml_artifacts = File.join(task_root_dir, 'builds-yaml-artifacts')
 
     builds = YAML.load_file(builds_file)
     built = YAML.load_file(built_file)
