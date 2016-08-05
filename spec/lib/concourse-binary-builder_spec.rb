@@ -96,8 +96,6 @@ describe ConcourseBinaryBuilder do
       end
     end
 
-
-
     context 'the dependency is go' do
       let(:dependency) { 'go' }
       let(:output_file) { 'go1.6.3.linux-amd64.tar.gz' }
