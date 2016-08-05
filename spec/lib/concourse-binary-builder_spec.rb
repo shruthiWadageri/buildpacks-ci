@@ -6,94 +6,180 @@ require 'tmpdir'
 require 'fileutils'
 
 describe ConcourseBinaryBuilder do
-  let(:dependency)        { 'go' }
-  let(:git_ssh_key)       { 'mock-git-ssh-key' }
-  let(:task_root_dir)     { Dir.mktmpdir }
-  let(:binary_builder_dir){ File.join(task_root_dir, 'binary-builder') }
-  let(:builds_yaml_artifacts_dir) {File.join(task_root_dir, 'builds-yaml-artifacts')}
-  let(:built_dir)         { File.join(task_root_dir, 'built-yaml') }
-  let(:builds_dir)        { File.join(task_root_dir, 'builds-yaml') }
-  let(:source_sha256)     { '6326aeed5f86cf18f16d6dc831405614f855e2d416a91fd3fdc334f772345b00'}
-  let(:source_url)        {'https://storage.googleapis.com/golang/go1.6.3.src.tar.gz'}
-  let(:version)           { '1.6.3' }
-  let(:flags)             { "--name=#{dependency} --version=\"#{version}\" --sha256=\"#{source_sha256}\"" }
+  context('binary builder is run') do
+
+    let(:git_ssh_key) { 'mock-git-ssh-key' }
+    let(:task_root_dir) { Dir.mktmpdir }
+    let(:binary_builder_dir) { File.join(task_root_dir, 'binary-builder') }
+    let(:builds_yaml_artifacts_dir) { File.join(task_root_dir, 'builds-yaml-artifacts') }
+
+    let(:built_dir) { File.join(task_root_dir, 'built-yaml') }
+    let(:built_yaml_contents) { {dependency => []}.to_yaml }
+
+    let(:builds_dir) { File.join(task_root_dir, 'builds-yaml') }
+    let(:builds_yaml_contents) do
+      yaml_hash = {}
+      yaml_hash[dependency] = [{'version' => version, 'sha256' => source_sha256}]
+      yaml_hash.to_yaml
+    end
+
+    let(:flags) { "--name=#{dependency} --version=\"#{version}\" --sha256=\"#{source_sha256}\"" }
 
 
+    subject { described_class.new(dependency, task_root_dir, binary_builder_dir, git_ssh_key) }
 
-  subject { described_class.new(dependency, task_root_dir, binary_builder_dir , git_ssh_key) }
+    before(:each) do
+      FileUtils.mkdir_p([built_dir, builds_dir, binary_builder_dir])
 
-  before do
-    built_yaml_contents= <<-HEREDOC
----
-go: []
-HEREDOC
-
-    builds_yaml_contents= <<-HEREDOC
----
-go:
-- version: 1.6.3
-  sha256: 6326aeed5f86cf18f16d6dc831405614f855e2d416a91fd3fdc334f772345b00
-HEREDOC
-
-    Dir.chdir(task_root_dir) do
-      FileUtils.mkdir_p(['built-yaml', 'builds-yaml','binary-builder'])
-      File.open("./built-yaml/#{dependency}-built.yml", "w") do |file|
-        file.write built_yaml_contents
+      Dir.chdir(built_dir) do
+        File.open("#{dependency}-built.yml", "w") do |file|
+          file.write built_yaml_contents
+        end
+        `git init`
       end
 
-      File.open("./builds-yaml/#{dependency}-builds.yml", "w") do |file|
-        file.write builds_yaml_contents
+      Dir.chdir(builds_dir) do
+        File.open("#{dependency}-builds.yml", "w") do |file|
+          file.write builds_yaml_contents
+        end
+        `git init`
+      end
+
+      allow(subject).to receive(:add_ssh_key_and_update).with(built_dir, 'binary-built-output')
+
+      allow(subject).to receive(:run_binary_builder).with(flags) do |flags|
+        Dir.chdir(binary_builder_dir) do
+          `touch build.tgz`
+          `touch #{output_file}`
+        end
+
+        "- url: #{source_url}"
       end
     end
 
-    Dir.chdir(builds_dir) do
-      `git init`
+    after(:each) do
+      FileUtils.rm_rf(task_root_dir)
     end
 
-    allow(subject).to receive(:add_ssh_key_and_update).with(built_dir, 'binary-built-output')
 
-    expect(subject).to receive(:run_binary_builder).with(flags) do |flags|
-      Dir.chdir(binary_builder_dir) do
-        `touch build.tgz`
-        `touch go1.6.3.linux-amd64.tar.gz`
-      end
-
-      "- url: #{source_url}"
-    end
-  end
-
-  after do
-    FileUtils.rm_rf(task_root_dir)
-  end
+    context 'the dependency is manually built' do
+      let(:dependency) { 'go' }
+      let(:output_file) { 'go1.6.3.linux-amd64.tar.gz' }
+      let(:source_sha256) { '6326aeed5f86cf18f16d6dc831405614f855e2d416a91fd3fdc334f772345b00' }
+      let(:source_url) { 'https://storage.googleapis.com/golang/go1.6.3.src.tar.gz' }
+      let(:version) { '1.6.3' }
 
 
+      before { subject.run }
 
-  context 'binary builder is run' do
-    let(:output_file) { 'go1.6.3.linux-amd64.tar.gz' }
-
-    before { subject.run }
-
-    it 'makes the commit with dependency + version' do
+      it 'makes the commit with dependency + version' do
         commit_msg = `cd #{builds_yaml_artifacts_dir} && git log -1 HEAD`
         expect(commit_msg).to include("Build #{dependency} - #{version}")
       end
 
-    it 'makes the commit with source url and sha256' do
-      commit_msg = `cd #{builds_yaml_artifacts_dir} && git log -1 HEAD`
+      it 'makes the commit with source url and sha256' do
+        commit_msg = `cd #{builds_yaml_artifacts_dir} && git log -1 HEAD`
 
-      expect(commit_msg).to include("source sha256: #{source_sha256}")
-      expect(commit_msg).to include("source url: #{source_url}")
+        expect(commit_msg).to include("source sha256: #{source_sha256}")
+        expect(commit_msg).to include("source url: #{source_url}")
+      end
+
+      it 'makes the commit with output filename, md5, and sha256' do
+        commit_msg = `cd #{builds_yaml_artifacts_dir} && git log -1 HEAD`
+
+        md5sum = Digest::MD5.file(File.join(binary_builder_dir, output_file)).hexdigest
+        shasum = Digest::SHA256.file(File.join(binary_builder_dir, output_file)).hexdigest
+
+        expect(commit_msg).to include(output_file)
+        expect(commit_msg).to include("md5: #{md5sum}")
+        expect(commit_msg).to include("sha256: #{shasum}")
+      end
     end
 
-    it 'makes the commit with output filename, md5, and sha256' do
-      commit_msg = `cd #{builds_yaml_artifacts_dir} && git log -1 HEAD`
+    context 'the dependency is automatically built' do
+      let(:dependency) { 'node' }
+      let(:output_file) { 'node-4.4.7-linux-x64.tgz' }
+      let(:source_sha256) { 'cbe1c6e421969dd5639d0fbaa6d3c1f56c0463b87efe75be8594638da4d8fc4f' }
+      let(:source_url) { 'https://nodejs.org/dist/v4.4.7/node-v4.4.7.tar.gz' }
+      let(:version) { '4.4.7' }
 
-      md5sum = Digest::MD5.file(File.join(binary_builder_dir,output_file)).hexdigest
-      shasum = Digest::SHA256.file(File.join(binary_builder_dir,output_file)).hexdigest
 
-      expect(commit_msg).to include(output_file)
-      expect(commit_msg).to include("md5: #{md5sum}")
-      expect(commit_msg).to include("sha256: #{shasum}")
+      before { subject.run }
+
+      it 'makes the commit with dependency + version' do
+        commit_msg = `cd #{builds_yaml_artifacts_dir} && git log -1 HEAD`
+        expect(commit_msg).to include("Build #{dependency} - #{version}")
+      end
+
+      it 'makes the commit with source url and sha256' do
+        commit_msg = `cd #{builds_yaml_artifacts_dir} && git log -1 HEAD`
+
+        expect(commit_msg).to include("source sha256: #{source_sha256}")
+        expect(commit_msg).to include("source url: #{source_url}")
+      end
+
+      it 'makes the commit with a timestamp' do
+        Dir.chdir(builds_yaml_artifacts_dir) do
+          built_yaml = YAML.load_file("#{dependency}-built.yml")
+          expect(built_yaml[dependency][0]['timestamp']).to_not eq nil
+        end
+      end
+
+
+      it 'makes the commit with output filename, md5, and sha256' do
+        commit_msg = `cd #{builds_yaml_artifacts_dir} && git log -1 HEAD`
+
+        md5sum = Digest::MD5.file(File.join(binary_builder_dir, output_file)).hexdigest
+        shasum = Digest::SHA256.file(File.join(binary_builder_dir, output_file)).hexdigest
+
+        expect(commit_msg).to include(output_file)
+        expect(commit_msg).to include("md5: #{md5sum}")
+        expect(commit_msg).to include("sha256: #{shasum}")
+      end
     end
+
+    context 'the dependency is composer' do
+      let(:dependency)    { 'composer' }
+      let(:output_file)   { 'composer-1.2.0.phar' }
+      let(:source_sha256) { 'dc80131545ed7f7b1369ae058824587f0718892f6a84bd86cfb0f28ab5e39095' }
+      let(:source_url)    { 'https://getcomposer.org/download/1.2.0/composer.phar' }
+      let(:version)       { '1.2.0' }
+
+
+      before { subject.run }
+
+      it 'makes the commit with dependency + version' do
+        commit_msg = `cd #{builds_yaml_artifacts_dir} && git log -1 HEAD`
+        expect(commit_msg).to include("Build #{dependency} - #{version}")
+      end
+
+      it 'makes the commit with source url and sha256' do
+        commit_msg = `cd #{builds_yaml_artifacts_dir} && git log -1 HEAD`
+
+        expect(commit_msg).to include("source sha256: #{source_sha256}")
+        expect(commit_msg).to include("source url: #{source_url}")
+      end
+
+      it 'makes the commit with a timestamp' do
+        Dir.chdir(builds_yaml_artifacts_dir) do
+          built_yaml = YAML.load_file("#{dependency}-built.yml")
+          expect(built_yaml[dependency][0]['timestamp']).to_not eq nil
+        end
+      end
+
+      it 'makes the commit with output filename, md5, and sha256' do
+        commit_msg = `cd #{builds_yaml_artifacts_dir} && git log -1 HEAD`
+
+        md5sum = Digest::MD5.file(File.join(binary_builder_dir, output_file)).hexdigest
+        shasum = Digest::SHA256.file(File.join(binary_builder_dir, output_file)).hexdigest
+
+        expect(commit_msg).to include(output_file)
+        expect(commit_msg).to include("md5: #{md5sum}")
+        expect(commit_msg).to include("sha256: #{shasum}")
+      end
+    end
+
+
+
   end
 end

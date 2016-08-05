@@ -39,12 +39,21 @@ class ConcourseBinaryBuilder
       exit
     end
 
+    binary_artifacts_dir = File.join(task_root_dir, 'binary-builder-artifacts')
+    binary_final_artifacts_dir = File.join(binary_artifacts_dir, 'final-artifact')
+    FileUtils.mkdir_p(binary_final_artifacts_dir)
+
+
     if binary_name == "composer" then
-      download_url = "https://getcomposer.org/download/#{latest_build['version']}/composer.phar"
-      system("curl #{download_url} -o binary-builder/composer-#{latest_build['version']}.phar") or raise "Could not download composer.phar"
-      FileUtils.cp_r(Dir["binary-builder/*"], "binary-builder-artifacts/")
-      FileUtils.mkdir_p('binary-builder-artifacts/final-artifact/')
-      FileUtils.cp("binary-builder-artifacts/composer-#{latest_build['version']}.phar", 'binary-builder-artifacts/final-artifact/composer.phar')
+      source_url = "https://getcomposer.org/download/#{latest_build['version']}/composer.phar"
+      @verification_type  = 'sha256'
+      @verification_value = latest_build['sha256']
+
+      Dir.chdir(binary_builder_dir) do
+        system("curl #{source_url} -o #{binary_builder_dir}/composer-#{latest_build['version']}.phar") or raise "Could not download composer.phar"
+        FileUtils.cp_r(Dir["*"], binary_artifacts_dir)
+        FileUtils.cp("#{binary_artifacts_dir}/composer-#{latest_build['version']}.phar", "#{binary_final_artifacts_dir}/composer.phar")
+      end
     else
       flags = "--name=#{binary_name}"
       latest_build.each_pair do |key, value|
@@ -61,18 +70,12 @@ class ConcourseBinaryBuilder
 
       @binary_builder_output = run_binary_builder(flags)
 
-
-      binary_artifacts_dir = File.join(task_root_dir, 'binary-builder-artifacts')
-      binary_final_artifacts_dir = File.join(binary_artifacts_dir, 'final-artifact')
-      FileUtils.mkdir_p(binary_final_artifacts_dir)
-
       FileUtils.cp_r(Dir["#{binary_builder_dir}/*.tgz", "#{binary_builder_dir}/*.tar.gz"], binary_artifacts_dir)
       FileUtils.cp_r("#{binary_artifacts_dir}/build.tgz", binary_final_artifacts_dir)
+
+      /- url:\s(.*)$/.match(@binary_builder_output)
+      source_url = $1
     end
-
-
-    /- url:\s(.*)$/.match(@binary_builder_output)
-    source_url = $1
 
     ext = case binary_name
             when 'composer' then
