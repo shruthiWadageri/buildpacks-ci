@@ -4,11 +4,13 @@ require 'fileutils'
 
 class ConcourseBinaryBuilder
 
-  attr_reader :binary_name, :git_ssh_key
+  attr_reader :binary_name, :git_ssh_key, :buildpacks_ci_dir, :binary_builder_dir
 
-  def initialize(binary_name, git_ssh_key)
+  def initialize(binary_name, buildpacks_ci_dir, binary_builder_dir, git_ssh_key)
     @git_ssh_key = git_ssh_key
     @binary_name = binary_name
+    @buildpacks_ci_dir = buildpacks_ci_dir
+    @binary_builder_dir = binary_builder_dir
   end
 
   def run
@@ -18,13 +20,13 @@ class ConcourseBinaryBuilder
 # built.yml
 
 #get latest version of <binary>-built.yml
-    built_dir = File.join(Dir.pwd, 'built-yaml')
+    built_dir = File.join(buildpacks_ci_dir, 'built-yaml')
     built_file = File.join(built_dir, "#{binary_name}-built.yml")
-    add_ssh_key_and_update(built_dir, "binary-built-output")
+    add_ssh_key_and_update(built_dir, 'binary-built-output')
 
-    builds_dir = File.join(Dir.pwd, 'builds-yaml')
+    builds_dir = File.join(buildpacks_ci_dir, 'builds-yaml')
     builds_file = File.join(builds_dir, "#{binary_name}-builds.yml")
-    builds_yaml_artifacts = File.join(Dir.pwd, 'builds-yaml-artifacts')
+    builds_yaml_artifacts = File.join(buildpacks_ci_dir, 'builds-yaml-artifacts')
 
     builds = YAML.load_file(builds_file)
     built = YAML.load_file(built_file)
@@ -56,7 +58,7 @@ class ConcourseBinaryBuilder
         flags << %( --#{key}="#{value}")
       end
 
-      Dir.chdir('binary-builder') do
+      Dir.chdir(binary_builder_dir) do
         @binary_builder_output = `./bin/binary-builder #{flags}`
         raise "Could not build" unless $?.success?
         if Dir.exist?("/tmp/x86_64-linux-gnu/")
