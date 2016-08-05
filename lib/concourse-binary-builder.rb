@@ -109,9 +109,10 @@ class ConcourseBinaryBuilder
   private
 
   def run_binary_builder(flags)
-    output = `#{binary_builder_dir}/bin/binary-builder #{flags}`
-    
+    output = ""
+
     Dir.chdir(binary_builder_dir) do
+      output = `./bin/binary-builder #{flags}`
       raise "Could not build" unless $?.success?
       if Dir.exist?("/tmp/x86_64-linux-gnu/")
         system('tar -zcf build.tgz -C /tmp ./x86_64-linux-gnu/') or raise "Could not create tar"
