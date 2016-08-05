@@ -3,6 +3,6 @@
 
 buildpacks_ci_dir = File.expand_path(File.join(File.dirname(__FILE__), '..'))
 
-require "#{buildpacks_ci_dir}/lib/build-binary"
+require "#{buildpacks_ci_dir}/lib/concourse-binary-builder"
 
 ConcourseBinaryBuilder.new(ENV['BINARY_NAME'], ENV['GIT_SSH_KEY']).run
