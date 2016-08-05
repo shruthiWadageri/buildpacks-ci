@@ -6,11 +6,11 @@ class ConcourseBinaryBuilder
 
   attr_reader :binary_name, :git_ssh_key, :task_root_dir, :binary_builder_dir
 
-  def initialize(binary_name, task_root_dir, binary_builder_dir, git_ssh_key)
+  def initialize(binary_name, task_root_dir, git_ssh_key)
     @git_ssh_key = git_ssh_key
     @binary_name = binary_name
     @task_root_dir = task_root_dir
-    @binary_builder_dir = binary_builder_dir
+    @binary_builder_dir = File.join(task_root_dir,'binary-builder')
   end
 
   def run

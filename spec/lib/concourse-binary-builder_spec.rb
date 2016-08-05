@@ -26,7 +26,7 @@ describe ConcourseBinaryBuilder do
     let(:flags) { "--name=#{dependency} --version=\"#{version}\" --sha256=\"#{source_sha256}\"" }
 
 
-    subject { described_class.new(dependency, task_root_dir, binary_builder_dir, git_ssh_key) }
+    subject { described_class.new(dependency, task_root_dir, git_ssh_key) }
 
     before(:each) do
       FileUtils.mkdir_p([built_dir, builds_dir, binary_builder_dir])
