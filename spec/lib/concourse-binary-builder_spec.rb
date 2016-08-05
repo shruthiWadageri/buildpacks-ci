@@ -86,6 +86,16 @@ describe ConcourseBinaryBuilder do
         expect(commit_msg).to include("sha256: #{shasum}")
       end
 
+      it 'has ci skip if necessary ' do
+        commit_msg = `cd #{builds_yaml_artifacts_dir} && git log -1 HEAD`
+
+        if automation == 'automated'
+          expect(commit_msg).not_to include("[ci skip]")
+        elsif automation == 'not automated'
+          expect(commit_msg).to include("[ci skip]")
+        end
+      end
+
       if automation == 'automated'
         it 'makes the commit with a timestamp' do
           Dir.chdir(builds_yaml_artifacts_dir) do
