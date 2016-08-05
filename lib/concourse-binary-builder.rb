@@ -4,8 +4,7 @@ require 'fileutils'
 
 class ConcourseBinaryBuilder
 
-  attr_reader :binary_name
-
+  attr_reader :binary_name, :git_ssh_key
 
   def initialize(binary_name, git_ssh_key)
     @git_ssh_key = git_ssh_key
