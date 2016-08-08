@@ -32,6 +32,8 @@ describe ConcourseBinaryBuilder do
 
     before(:each) do
       FileUtils.mkdir_p([built_dir, builds_dir, binary_builder_dir])
+      FileUtils.rm_rf('/tmp/src')
+      FileUtils.rm_rf('/tmp/x86_64-linux-gnu')
 
       Dir.chdir(built_dir) do
         File.open("#{dependency}-built.yml", "w") do |file|
@@ -51,9 +53,17 @@ describe ConcourseBinaryBuilder do
 
       allow(subject).to receive(:run_binary_builder).with(flags) do |flags|
         Dir.chdir(binary_builder_dir) do
-          `touch build.tgz`
           `touch #{output_file}`
         end
+
+        if dependency == "glide" or dependency == "godep" then
+            FileUtils.mkdir_p('/tmp/src')
+            `touch /tmp/src/main.go`
+        else
+            FileUtils.mkdir_p('/tmp/x86_64-linux-gnu')
+            `touch /tmp/x86_64-linux-gnu/main.c`
+        end
+
 
         "- url: #{source_url}"
       end
