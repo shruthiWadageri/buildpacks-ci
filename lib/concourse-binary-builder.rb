@@ -67,6 +67,7 @@ class ConcourseBinaryBuilder
       version_to_build = latest_build['version']
       @source_url = "https://getcomposer.org/download/#{version_to_build}/composer.phar"
       system("curl #{source_url} -o #{binary_builder_dir}/composer-#{version_to_build}.phar") or raise "Could not download composer.phar"
+      system("tar -zcf #{binary_builder_dir}/build.tgz #{binary_builder_dir}/composer-#{version_to_build}.phar") or raise "Could not tar composer-#{version_to_build}.phar"
     else
       binary_builder_output = run_binary_builder(flags)
       /- url:\s(.*)$/.match(binary_builder_output)
@@ -75,15 +76,8 @@ class ConcourseBinaryBuilder
   end
 
   def copy_binaries_to_output_directory
-    if binary_name == "composer" then
-      version_to_build = latest_build['version']
-
-      FileUtils.cp_r(Dir["#{binary_builder_dir}/*"], binary_artifacts_dir)
-      FileUtils.cp("#{binary_artifacts_dir}/composer-#{version_to_build}.phar", "#{final_artifacts_dir}/composer.phar")
-    else
-      FileUtils.cp_r(Dir["#{binary_builder_dir}/*.tgz", "#{binary_builder_dir}/*.tar.gz"], binary_artifacts_dir)
+      FileUtils.cp_r(Dir["#{binary_builder_dir}/*.tgz", "#{binary_builder_dir}/*.tar.gz", "#{binary_builder_dir}/*.phar"], binary_artifacts_dir)
       FileUtils.cp_r("#{binary_artifacts_dir}/build.tgz", final_artifacts_dir)
-    end
   end
 
   def load_builds_yaml

@@ -12,6 +12,8 @@ describe ConcourseBinaryBuilder do
     let(:task_root_dir) { Dir.mktmpdir }
     let(:binary_builder_dir) { File.join(task_root_dir, 'binary-builder') }
     let(:builds_yaml_artifacts_dir) { File.join(task_root_dir, 'builds-yaml-artifacts') }
+    let(:binary_artifacts_dir) {File.join(task_root_dir, 'binary-builder-artifacts')}
+    let(:final_artifact_dir) {File.join(binary_artifacts_dir, 'final-artifact')}
 
     let(:built_dir) { File.join(task_root_dir, 'built-yaml') }
     let(:built_yaml_contents) { {dependency => []}.to_yaml }
@@ -106,6 +108,17 @@ describe ConcourseBinaryBuilder do
       end
     end
 
+
+    shared_examples_for 'the resulting tar files are copied to the proper location' do
+      it 'copies the built binaries' do
+        expect(File.exist? "#{binary_artifacts_dir}/#{output_file}").to eq true
+      end
+
+      it 'copies the source to build.tgz' do
+        expect(File.exist? "#{final_artifact_dir}/build.tgz").to eq true
+      end
+    end
+
     context 'the dependency is go' do
       let(:dependency) { 'go' }
       let(:output_file) { 'go1.6.3.linux-amd64.tar.gz' }
@@ -116,6 +129,7 @@ describe ConcourseBinaryBuilder do
       before { subject.run }
 
       it_behaves_like 'a commit is made in builds-yaml-artifacts with the proper git message', 'not automated'
+      it_behaves_like 'the resulting tar files are copied to the proper location'
     end
 
     context 'the dependency is python' do
@@ -128,6 +142,7 @@ describe ConcourseBinaryBuilder do
       before { subject.run }
 
       it_behaves_like 'a commit is made in builds-yaml-artifacts with the proper git message', 'not automated'
+      it_behaves_like 'the resulting tar files are copied to the proper location'
     end
 
     context 'the dependency is glide' do
@@ -140,6 +155,7 @@ describe ConcourseBinaryBuilder do
       before { subject.run }
 
       it_behaves_like 'a commit is made in builds-yaml-artifacts with the proper git message', 'automated'
+      it_behaves_like 'the resulting tar files are copied to the proper location'
     end
 
 
@@ -154,7 +170,7 @@ describe ConcourseBinaryBuilder do
       before { subject.run }
 
       it_behaves_like 'a commit is made in builds-yaml-artifacts with the proper git message', 'automated'
-
+      it_behaves_like 'the resulting tar files are copied to the proper location'
     end
 
     context 'the dependency is composer' do
@@ -168,7 +184,7 @@ describe ConcourseBinaryBuilder do
       before { subject.run }
 
       it_behaves_like 'a commit is made in builds-yaml-artifacts with the proper git message', 'automated'
-
+      it_behaves_like 'the resulting tar files are copied to the proper location'
     end
   end
 end
