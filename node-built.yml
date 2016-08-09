@@ -1,14 +1,11 @@
 ---
 node:
-- version: 6.3.0
-  sha256: 4ed7a99985f8afee337cc22d5fef61b495ab4238dfff3750ac9019e87fc6aae6
-  timestamp: 2016-07-18 15:31:35 UTC
-- version: 4.4.7
-  sha256: cbe1c6e421969dd5639d0fbaa6d3c1f56c0463b87efe75be8594638da4d8fc4f
-  timestamp: 2016-07-18 15:38:10 UTC
-- version: 6.3.1
-  sha256: 3f6144dcf13c210b11c83dc0b0a841219347a769b5a3b883b20f7ab8dc4008f6
-  timestamp: 2016-07-21 23:24:01 UTC
-- version: 4.4.7
-  sha256: cbe1c6e421969dd5639d0fbaa6d3c1f56c0463b87efe75be8594638da4d8fc4f
-  timestamp: 2016-07-27 20:22:54 UTC
+  - version: 6.3.0
+    sha256: 4ed7a99985f8afee337cc22d5fef61b495ab4238dfff3750ac9019e87fc6aae6
+    timestamp: 2016-07-18 15:31:35 UTC
+  - version: 6.3.1
+    sha256: 3f6144dcf13c210b11c83dc0b0a841219347a769b5a3b883b20f7ab8dc4008f6
+    timestamp: 2016-07-21 23:24:01 UTC
+  - version: 4.4.7
+    sha256: cbe1c6e421969dd5639d0fbaa6d3c1f56c0463b87efe75be8594638da4d8fc4f
+    timestamp: 2016-07-27 20:22:54 UTC
