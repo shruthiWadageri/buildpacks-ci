@@ -1,5 +1,5 @@
 ---
 composer:
-- version: 1.2.0
-  sha256: dc80131545ed7f7b1369ae058824587f0718892f6a84bd86cfb0f28ab5e39095
-  timestamp: 2016-07-19 05:23:46 UTC
+  - version: 1.2.0
+    sha256: dc80131545ed7f7b1369ae058824587f0718892f6a84bd86cfb0f28ab5e39095
+    timestamp: 2016-07-19 05:23:46 UTC
