@@ -1,4 +1,7 @@
 ---
+- 'USN-3054-1: Linux kernel (Xenial HWE) vulnerabilities'
+- 'USN-3053-1: Linux kernel (Vivid HWE) vulnerabilities'
+- 'USN-3052-1: Linux kernel vulnerabilities'
 - 'USN-3041-1: Oxide vulnerabilities'
 - 'USN-3044-1: Firefox vulnerabilities'
 - 'USN-3047-1: QEMU vulnerabilities'
