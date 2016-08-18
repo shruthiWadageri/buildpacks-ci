@@ -1,4 +1,5 @@
 ---
+- 'USN-3066-1: PostgreSQL vulnerabilities'
 - 'USN-3062-1: OpenJDK 7 vulnerabilities'
 - 'USN-3047-2: QEMU regression'
 - 'USN-3054-1: Linux kernel (Xenial HWE) vulnerabilities'
