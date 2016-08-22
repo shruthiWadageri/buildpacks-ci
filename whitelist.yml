@@ -2,5 +2,3 @@
 # Rebuilt rubies: https://github.com/cloudfoundry/ruby-buildpack/commit/4fc574f27a41f11af6c9db864ac62f9dbb4eb09d
 - https://pivotal-buildpacks.s3.amazonaws.com/ruby/binaries/lucid64/ruby-2.0.0.tgz
 - https://pivotal-buildpacks.s3.amazonaws.com/ruby/binaries/cflinuxfs2/ruby-2.0.0.tgz
-# Rebuilt openjdk: https://github.com/cloudfoundry/ruby-buildpack/commit/80afd9a
-- https://download.run.pivotal.io/openjdk/trusty/x86_64/openjdk-1.8.0_77.tar.gz
