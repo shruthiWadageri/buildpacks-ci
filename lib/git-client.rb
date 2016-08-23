@@ -1,9 +1,9 @@
 require 'open3'
 
 class GitClient
-  def self.last_commit_message(dir)
+  def self.last_commit_message(dir, previous = 0)
     Dir.chdir(dir) do
-      command = 'git log --format=%B -n 1 HEAD'
+      command = "git log --format=%B -n 1 HEAD~#{previous}"
       stdout_str, stderr_str, status = Open3.capture3(command)
 
       raise "Could not get last commit message. STDERR was: #{stderr_str}" unless status.success?

@@ -2,12 +2,13 @@
 require 'spec_helper'
 require_relative '../../lib/dependency-build-enqueuer'
 require_relative '../../lib/buildpack-dependency'
+require_relative '../../lib/git-client'
 require 'yaml'
 require 'tmpdir'
 
 describe DependencyBuildEnqueuer do
   let(:new_releases_dir)    { Dir.mktmpdir }
-  let(:binary_builds_dir)   { File.expand_path(File.join(File.dirname(__FILE__),'..','..')) }
+  let(:binary_builds_dir)   { Dir.mktmpdir }
   let(:options)             { {} }
   let(:test_branch_name)    { "dependency-build-enqueuer-test-#{(10000*(Random.rand)).to_i}" }
 
@@ -26,15 +27,11 @@ describe DependencyBuildEnqueuer do
       File.open(builds_file, "w") do |file|
         file.write dependency_builds.to_yaml
       end
-      `git checkout -b #{test_branch_name}`
-    end
-
-    after do
-      `git checkout develop`
-      `git branch -D #{test_branch_name}`
     end
 
     shared_examples_for "non pre-release builds are triggered by <dependency>-new.yaml" do |verification_type|
+      let(:commit_message) {"replace me"}
+
       before do
         if verification_type == 'sha256'
           allow(described_class).to receive(:shasum_256_verification).with(source_url_1).and_return(["sha256", sha256])
@@ -45,6 +42,8 @@ describe DependencyBuildEnqueuer do
         end
 
         allow(Dir).to receive(:chdir).and_call_original
+        allow(GitClient).to receive(:add_file).and_return(nil)
+        allow(GitClient).to receive(:safe_commit).with(commit_message).and_return(nil)
 
         File.open(dependency_new_versions_file, "w") do |file|
           file.write new_versions.to_yaml
@@ -59,8 +58,7 @@ describe DependencyBuildEnqueuer do
         end
 
         it 'creates a commit for each version' do
-          count_of_git_commits = `git log --oneline develop..#{test_branch_name} | wc -l`.to_i
-          expect(count_of_git_commits).to eq 2
+          expect(GitClient).to have_received(:add_file).with(builds_file).twice
         end
 
         context 'for each distinct version' do
