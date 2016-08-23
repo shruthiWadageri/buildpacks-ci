@@ -1,5 +1,8 @@
 ---
 glide:
-  - version: v0.11.1
-    sha256: 3c4958d1ab9446e3d7b2dc280cd43b84c588d50eb692487bcda950d02b9acc4c
-    timestamp: 2016-07-21 18:06:07 UTC
+- version: v0.11.1
+  sha256: 3c4958d1ab9446e3d7b2dc280cd43b84c588d50eb692487bcda950d02b9acc4c
+  timestamp: 2016-07-21 18:06:07 UTC
+- version: v0.12.0
+  sha256: 79ebe866fae4e18767ce67446b8df51b44d58c209d68ad43a025ba9d9b8c2a3c
+  timestamp: 2016-08-23 15:06:07 UTC
