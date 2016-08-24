@@ -30,7 +30,8 @@ describe DependencyBuildEnqueuer do
     end
 
     shared_examples_for "non pre-release builds are triggered by <dependency>-new.yaml" do |verification_type|
-      let(:commit_message) {"replace me"}
+      let(:commit_message_1) {"Enqueue #{dependency} - #{expected_version_1}"}
+      let(:commit_message_2) {"Enqueue #{dependency} - #{expected_version_2}"}
 
       before do
         if verification_type == 'sha256'
@@ -43,7 +44,8 @@ describe DependencyBuildEnqueuer do
 
         allow(Dir).to receive(:chdir).and_call_original
         allow(GitClient).to receive(:add_file).and_return(nil)
-        allow(GitClient).to receive(:safe_commit).with(commit_message).and_return(nil)
+        allow(GitClient).to receive(:safe_commit).with(commit_message_1).and_return(nil)
+        allow(GitClient).to receive(:safe_commit).with(commit_message_2).and_return(nil)
 
         File.open(dependency_new_versions_file, "w") do |file|
           file.write new_versions.to_yaml
@@ -57,7 +59,7 @@ describe DependencyBuildEnqueuer do
           expect(Dir).to have_received(:chdir).with(binary_builds_dir).twice
         end
 
-        it 'creates a commit for each version' do
+        it 'git adds <dep>-builds.yml once for each version' do
           expect(GitClient).to have_received(:add_file).with(builds_file).twice
         end
 
@@ -65,11 +67,8 @@ describe DependencyBuildEnqueuer do
           let(:committed_dependency) { YAML.load_file(builds_file) }
 
           it 'has a single version number in a commit message' do
-            commit_msg = `git log --oneline -1 HEAD`
-            expect(commit_msg).to include expected_version_1
-
-            commit_msg = `git log --oneline -1 HEAD~`
-            expect(commit_msg).to include expected_version_2
+            expect(GitClient).to have_received(:safe_commit).with(commit_message_1)
+            expect(GitClient).to have_received(:safe_commit).with(commit_message_2)
           end
 
           it 'has a single version number in the <dependency>-builds.yml file' do
