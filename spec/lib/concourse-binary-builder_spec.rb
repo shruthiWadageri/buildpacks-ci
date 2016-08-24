@@ -1,6 +1,7 @@
 # encoding: utf-8
 require 'spec_helper'
 require_relative '../../lib/concourse-binary-builder'
+require_relative '../../lib/git-client'
 require 'yaml'
 require 'tmpdir'
 require 'fileutils'
@@ -77,22 +78,23 @@ describe ConcourseBinaryBuilder do
     end
 
     shared_examples_for 'a commit is made in builds-yaml-artifacts with the proper git message' do |automation|
+      let(:commit_msg) { GitClient.last_commit_message(builds_yaml_artifacts_dir) }
 
       it 'makes the commit with dependency + version' do
-        commit_msg = `cd #{builds_yaml_artifacts_dir} && git log -1 HEAD`
         expect(commit_msg).to include("Build #{dependency} - #{version}")
       end
 
       it 'makes the commit with source url and sha256' do
-        commit_msg = `cd #{builds_yaml_artifacts_dir} && git log -1 HEAD`
-
         expect(commit_msg).to include("source sha256: #{source_sha256}")
         expect(commit_msg).to include("source url: #{source_url}")
       end
 
-      it 'makes the commit with output filename, md5, and sha256' do
-        commit_msg = `cd #{builds_yaml_artifacts_dir} && git log -1 HEAD`
+      it 'makes the commit as buildpacks ci robot' do
+        author = GitClient.last_commit_author(builds_yaml_artifacts_dir)
+        expect(author).to eq('CF Buildpacks Team CI Server')
+      end
 
+      it 'makes the commit with output filename, md5, and sha256' do
         md5sum = Digest::MD5.file(File.join(binary_builder_dir, output_file)).hexdigest
         shasum = Digest::SHA256.file(File.join(binary_builder_dir, output_file)).hexdigest
 
@@ -102,8 +104,6 @@ describe ConcourseBinaryBuilder do
       end
 
       it 'has ci skip if necessary' do
-        commit_msg = `cd #{builds_yaml_artifacts_dir} && git log -1 HEAD`
-
         if automation == 'automated'
           expect(commit_msg).not_to include("[ci skip]")
         elsif automation == 'not automated'
