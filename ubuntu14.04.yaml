@@ -1,4 +1,6 @@
 ---
+- 'USN-3067-1: HarfBuzz vulnerabilities'
+- 'USN-3068-1: Libidn vulnerabilities'
 - 'USN-3065-1: Libgcrypt vulnerability'
 - 'USN-3064-1: GnuPG vulnerability'
 - 'USN-3063-1: Fontconfig vulnerability'
