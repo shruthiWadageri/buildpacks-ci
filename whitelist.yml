@@ -4,3 +4,9 @@
 - https://pivotal-buildpacks.s3.amazonaws.com/ruby/binaries/cflinuxfs2/ruby-2.0.0.tgz
 # Rebuilt openjdk: https://github.com/cloudfoundry/ruby-buildpack/commit/80afd9a
 - https://download.run.pivotal.io/openjdk/trusty/x86_64/openjdk-1.8.0_77.tar.gz
+# Go binaries earlier than 1.2.2 are not from go.google.com anymore
+- http://go.googlecode.com/files/go1.1.linux-amd64.tar.gz
+- http://go.googlecode.com/files/go1.1.1.linux-amd64.tar.gz
+- http://go.googlecode.com/files/go1.1.2.linux-amd64.tar.gz
+- http://go.googlecode.com/files/go1.2.linux-amd64.tar.gz
+- http://go.googlecode.com/files/go1.2.1.linux-amd64.tar.gz
