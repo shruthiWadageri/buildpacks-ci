@@ -5,4 +5,6 @@ require_relative '../lib/state-of-bosh-lites'
 
 state_object = StateOfBoshLites.new
 state_object.get_states!
-state_object.display_state(ARGV[0].downcase)
+
+display_type = ARGV[0] || 'text'
+state_object.display_state(display_type.downcase)
