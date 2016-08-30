@@ -10,3 +10,5 @@
 - http://go.googlecode.com/files/go1.1.2.linux-amd64.tar.gz
 - http://go.googlecode.com/files/go1.2.linux-amd64.tar.gz
 - http://go.googlecode.com/files/go1.2.1.linux-amd64.tar.gz
+# Accidentally rebuilt by java buildpack team: https://cloudfoundry.slack.com/archives/java-buildpack/p1472571161000078
+- https://java-buildpack.cloudfoundry.org/openjdk/trusty/x86_64/openjdk-1.8.0_101.tar.gz
