@@ -68,15 +68,19 @@ class StateOfBoshLites
   end
 
   def get_states!
-    current_branch = GitClient.get_current_branch(Dir.pwd)
+    buildpacks_ci_dir = File.join(File.dirname(__FILE__), '..')
 
-    GitClient.checkout_branch('resource-pools')
-    GitClient.pull_current_branch
+    Dir.chdir(buildpacks_ci_dir) do
+      current_branch = GitClient.get_current_branch(Dir.pwd)
 
-    environment_names.each do |env|
-      state_of_environments.push({'name' => env, 'status' => get_environment_status(env)})
+      GitClient.checkout_branch('resource-pools')
+      GitClient.pull_current_branch
+
+      environment_names.each do |env|
+        state_of_environments.push({'name' => env, 'status' => get_environment_status(env)})
+      end
+
+      GitClient.checkout_branch(current_branch)
     end
-
-    GitClient.checkout_branch(current_branch)
   end
 end
