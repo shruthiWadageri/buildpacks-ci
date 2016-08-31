@@ -8,9 +8,10 @@ pushd buildpack-master
   bundle config mirror.https://rubygems.org ${RUBYGEM_MIRROR}
   bundle install
   bundle exec buildpack-packager --cached
+
+  VERSION=$(cat VERSION)
 popd
 
-VERSION=$(cat VERSION)
 TIMESTAMP=$(date +%s)
 
 CACHED_BUILDPACK="buildpack-master/dotnet-core_buildpack-cached-v$VERSION.zip"

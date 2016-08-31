@@ -141,6 +141,8 @@ jobs:
 
       - task: package-cached-buildpack
         file: buildpacks-ci/tasks/package-cached-buildpack/task.yml
+        params:
+          RUBYGEM_MIRROR: {{rubygem-mirror}}
       - put: pivotal-buildpack-cached
         params:
           from: buildpack-artifacts/dotnet-core_buildpack-cached-v(.*).zip
