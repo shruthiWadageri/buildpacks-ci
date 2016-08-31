@@ -60,8 +60,8 @@ resources:
   - name: pivnet-dotnet-core-metadata
     type: git
     source:
-      private_key: {{buildpacks-ci-private-key}}
-      uri: https://github.com/pivotal-cf/buildpacks-ci-robots # pivotal-cf because pivnet is not foundation's
+      private_key: {{pivotal-cf-buildpacks-ci-robots}}
+      uri: git@github.com:pivotal-cf/buildpacks-ci-robots.git # pivotal-cf because pivnet is not foundation's
       paths: [ pivnet-metadata/dotnet-core.yml ]
 
 jobs:
