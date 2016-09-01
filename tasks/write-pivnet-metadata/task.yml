@@ -9,10 +9,11 @@ image_resource:
 inputs:
   - name: buildpack-master
   - name: buildpacks-ci
+  - name: pivotal-buildpack-cached
   - name: pivnet-dotnet-core-metadata
 
 outputs:
-  - name: pivnet-dotnet-core-metadata-out
+  - name: pivnet-dotnet-core-metadata-artifacts
 
 run:
   path: buildpacks-ci/tasks/write-pivnet-metadata/run.rb

@@ -137,7 +137,6 @@ jobs:
         - get: buildpack-master
         - get: buildpack-packager
         - get: buildpacks-ci
-        - get: pivnet-dotnet-core-metadata
 
       - task: package-cached-buildpack
         file: buildpacks-ci/tasks/package-cached-buildpack/task.yml
@@ -148,19 +147,30 @@ jobs:
           from: buildpack-artifacts/dotnet-core_buildpack-cached-v(.*).zip
           to: /experimental-buildpacks/dotnet-core/
 
+  - name: write-pivnet-metadata
+    public: true
+    plan:
+      - aggregate:
+        - get: pivnet-dotnet-core-metadata
+        - get: buildpack-master
+          passed: [ package-cached-buildpack ]
+        - get: pivotal-buildpack-cached
+          passed: [ package-cached-buildpack ]
+          trigger: true
+        - get: buildpacks-ci
       - task: write-pivnet-metadata
         file: buildpacks-ci/tasks/write-pivnet-metadata/task.yml
       - put: pivnet-dotnet-core-metadata
         params:
-          repository: pivnet-dotnet-core-metadata-out
+          repository: pivnet-dotnet-core-metadata-artifacts
 
   - name: release-to-pivnet-integration
     public: true
     plan:
       - get: pivotal-buildpack-cached
-        passed: [ package-cached-buildpack ]
+        passed: [ write-pivnet-metadata ]
       - get: pivnet-dotnet-core-metadata
-        passed: [ package-cached-buildpack ]
+        passed: [ write-pivnet-metadata ]
         trigger: true
       - put: pivnet-integration
         params:
