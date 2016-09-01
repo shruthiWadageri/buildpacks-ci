@@ -14,7 +14,7 @@ class PivnetMetadataWriter
 
   def get_version
     Dir.chdir(buildpack_dir) do
-      File.read('VERSION')
+      File.read('VERSION').strip
     end
   end
 
