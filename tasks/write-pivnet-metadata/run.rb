@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 
-require 'pivnet-metadata-writer'
+require_relative 'pivnet-metadata-writer'
 
 root_dir      = Dir.pwd
 metadata_dir  = File.join(root_dir, 'pivnet-dotnet-core-metadata', 'pivnet-metadata')
