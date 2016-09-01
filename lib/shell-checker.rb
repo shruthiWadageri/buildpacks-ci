@@ -4,12 +4,12 @@ require 'set'
 
 class ShellChecker
   def find_shell_files(directory:)
-    paths_matched = Set.new
+    paths_matched = Hash.new
 
     Find.find(directory) do |file_path|
       if FileTest.file?(file_path)
-        paths_matched << file_path if contains_shebang?(file_path)
-        paths_matched << file_path if ends_with_sh?(file_path)
+        paths_matched[file_path] = "exists!!!1!" if contains_shebang?(file_path)
+        paths_matched[file_path] = "exists!!!1!" if ends_with_sh?(file_path)
       end
     end
 
