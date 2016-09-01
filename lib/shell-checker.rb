@@ -4,6 +4,12 @@ require 'set'
 
 class ShellChecker
   def check_shell_files(directory:)
+    find_shell_files(directory)
+  end
+
+  private
+
+  def find_shell_files(directory)
     paths_matched = Hash.new
 
     Find.find(directory) do |file_path|
@@ -15,8 +21,6 @@ class ShellChecker
 
     paths_matched
   end
-
-  private
 
   def contains_shebang?(file_path)
     File.open(file_path) { |file| file.readline }.match /^#!.*bash/
