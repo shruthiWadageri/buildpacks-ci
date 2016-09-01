@@ -5,7 +5,7 @@ describe ShellChecker do
   fixture_dir = File.join(__dir__, '../fixtures/shellchecker')
 
   describe 'finding scripts to check' do
-    subject { ShellChecker.new.find_shell_files(directory: fixture_dir) }
+    subject { ShellChecker.new.check_shell_files(directory: fixture_dir) }
 
     it 'finds files with a .sh extension' do
       expect(subject.keys).to include("#{fixture_dir}/no_shebang.sh", "#{fixture_dir}/shebang_with_extension.sh")

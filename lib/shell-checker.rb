@@ -3,7 +3,7 @@ require 'pathname'
 require 'set'
 
 class ShellChecker
-  def find_shell_files(directory:)
+  def check_shell_files(directory:)
     paths_matched = Hash.new
 
     Find.find(directory) do |file_path|
