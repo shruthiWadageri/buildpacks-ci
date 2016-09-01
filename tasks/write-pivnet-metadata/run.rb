@@ -8,7 +8,11 @@ require_relative "#{root_dir}/buildpacks-ci/lib/git-client"
 metadata_dir  = File.join(root_dir, 'pivnet-dotnet-core-metadata', 'pivnet-metadata')
 buildpack_dir = File.join(root_dir, 'buildpack-master')
 
-buildpack_files = Dir["pivotal-buildpack-cached/dotnet-core_buildpack-cached-v*.zip"]
+buildpack_files = ''
+
+Dir.chdir('pivotal-buildpack-cached') do
+  buildpack_files = Dir["dotnet-core_buildpack-cached-v*.zip"]
+end
 
 if buildpack_files.count != 1
   puts "Expected 1 cached buildpack file, found #{buildpack_files.count}:"
