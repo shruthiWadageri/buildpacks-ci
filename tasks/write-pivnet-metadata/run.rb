@@ -1,8 +1,10 @@
 #!/usr/bin/env ruby
 
-require_relative 'pivnet-metadata-writer'
-
 root_dir      = Dir.pwd
+
+require_relative 'pivnet-metadata-writer'
+require_relative "#{root_dir}/buildpacks-ci/lib/git-client"
+
 metadata_dir  = File.join(root_dir, 'pivnet-dotnet-core-metadata', 'pivnet-metadata')
 buildpack_dir = File.join(root_dir, 'buildpack-master')
 
@@ -17,6 +19,11 @@ else
 
   writer = PivnetMetadataWriter.new(metadata_dir, buildpack_dir, cached_buildpack_filename)
   writer.run!
+
+  Dir.chdir(metadata_dir) do
+    GitClient.add_file('dotnet-core.yml')
+    GitClient.safe_commit("Create Pivnet release metadata for .NET buildpack v#{writer.get_version}")
+  end
 
   system("rsync -a pivnet-dotnet-core-metadata/ pivnet-dotnet-core-metadata-artifacts")
 end
