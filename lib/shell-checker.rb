@@ -1,10 +1,10 @@
 require 'find'
 require 'pathname'
+require 'set'
 
 class ShellChecker
-
   def find_shell_files(directory:)
-    paths_matched = []
+    paths_matched = Set.new
 
     Find.find(directory) do |file_path|
       if FileTest.file?(file_path)
@@ -13,7 +13,7 @@ class ShellChecker
       end
     end
 
-    paths_matched.uniq
+    paths_matched
   end
 
   private
