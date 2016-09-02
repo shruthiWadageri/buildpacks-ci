@@ -18,5 +18,9 @@ describe ShellChecker do
     it 'only finds each file once' do
       expect(subject.keys).to contain_exactly("#{fixture_dir}/shebang_without_sh_extension", "#{fixture_dir}/shebang_with_extension.sh", "#{fixture_dir}/no_shebang.sh")
     end
+
+    it 'shows which files passed and which failed'
+    it 'provides file-by-file, line-by-line results'
+    it 'links error codes to the matching wiki page'
   end
 end
