@@ -136,6 +136,8 @@ jobs:
     public: true
     plan:
       - aggregate:
+        - get: pivotal-buildpack
+        - get: pivotal-buildpack-cached
         - get: buildpacks-ci
         - get: buildpack
           resource: buildpack-master
