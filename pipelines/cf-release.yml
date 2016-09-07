@@ -419,7 +419,7 @@ jobs:
             BLOB_NAME: <%= language %>-buildpack
             <% end %>
             RELEASE_NAME: <%= language %>-buildpack-release
-            RELEASE_DIR: release/<%= language %>-buildpack-release
+            RELEASE_DIR: release
         - put: buildpack-releases
           params:
             repository: release-artifacts
