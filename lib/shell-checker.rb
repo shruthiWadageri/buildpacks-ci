@@ -19,14 +19,19 @@ class ShellChecker
     paths_matched = Set.new
 
     Find.find(directory) do |file_path|
+      Find.prune if path_begins_with_dot?(file_path)
+
       if FileTest.file?(file_path)
-        puts file_path
         paths_matched << file_path if contains_shebang?(file_path)
         paths_matched << file_path if ends_with_sh?(file_path)
       end
     end
 
     paths_matched
+  end
+
+  def path_begins_with_dot?(file_path)
+    File.basename(file_path)[0] == ?.
   end
 
   def contains_shebang?(file_path)

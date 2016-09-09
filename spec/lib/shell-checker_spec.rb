@@ -17,6 +17,10 @@ describe ShellChecker do
     it 'only finds each file once' do
       expect(subject.keys).to contain_exactly("#{fixture_dir}/shebang_without_sh_extension", "#{fixture_dir}/shebang_with_extension.sh", "#{fixture_dir}/no_shebang.sh")
     end
+
+    it 'skips dotfiles' do
+      expect(subject.keys).to_not include("#{fixture_dir}/.dotfile")
+    end
   end
 
   describe 'interpreting results' do
