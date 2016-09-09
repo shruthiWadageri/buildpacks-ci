@@ -7,10 +7,10 @@ image_resource:
     repository: cfbuildpacks/ci
 
 inputs:
-  - name: buildpacks-ci
+  - name: ci-develop
 
 run:
-  path: buildpacks-ci/tasks/run-shellcheck/run.sh
+  path: ci-develop/tasks/run-shellcheck/run.sh
 
 params:
   DIRECTORY_TO_CHECK:
