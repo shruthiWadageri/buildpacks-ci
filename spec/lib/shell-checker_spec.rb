@@ -2,7 +2,7 @@ require 'spec_helper'
 require_relative '../../lib/shell-checker'
 
 describe ShellChecker do
-  fixture_dir = File.join(__dir__, '../fixtures/shellchecker')
+  fixture_dir = File.join(__dir__, '../fixtures/shellchecker/file-identification')
 
   describe 'finding scripts to check' do
     subject { ShellChecker.new.check_shell_files(directory: fixture_dir) }
