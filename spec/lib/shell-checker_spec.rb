@@ -2,9 +2,8 @@ require 'spec_helper'
 require_relative '../../lib/shell-checker'
 
 describe ShellChecker do
-  fixture_dir = File.join(__dir__, '../fixtures/shellchecker/file-identification')
-
   describe 'finding scripts to check' do
+    let(:fixture_dir) { File.join(__dir__, '../fixtures/shellchecker/file-identification') }
     subject { ShellChecker.new.check_shell_files(directory: fixture_dir) }
 
     it 'finds files with a .sh extension' do
@@ -18,9 +17,14 @@ describe ShellChecker do
     it 'only finds each file once' do
       expect(subject.keys).to contain_exactly("#{fixture_dir}/shebang_without_sh_extension", "#{fixture_dir}/shebang_with_extension.sh", "#{fixture_dir}/no_shebang.sh")
     end
+  end
 
-    it 'shows which files passed and which failed'
-    it 'provides file-by-file, line-by-line results'
-    it 'links error codes to the matching wiki page'
+  describe 'interpreting results' do
+    let(:fixture_dir) { File.join(__dir__, '../fixtures/shellchecker/scripts-with-problems') }
+    subject { ShellChecker.new.check_shell_files(directory: fixture_dir) }
+
+    it 'groups the output from shellchecker by file' do
+      expect(subject["#{fixture_dir}/script-with-error-sc2006.sh"]).to match /SC2006:/
+    end
   end
 end
