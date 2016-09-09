@@ -20,6 +20,7 @@ class ShellChecker
 
     Find.find(directory) do |file_path|
       if FileTest.file?(file_path)
+        puts file_path
         paths_matched << file_path if contains_shebang?(file_path)
         paths_matched << file_path if ends_with_sh?(file_path)
       end
