@@ -7,7 +7,7 @@ class ShellChecker
     shell_files = find_shell_files(directory)
     shellcheck_results = {}
     shell_files.map do |shell_file_path|
-      shellcheck_results[shell_file_path] = `shellcheck #{shell_file_path}`
+      shellcheck_results[shell_file_path] = `shellcheck --color=always #{shell_file_path}`
     end
 
     shellcheck_results
