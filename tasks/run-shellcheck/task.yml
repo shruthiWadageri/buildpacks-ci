@@ -10,7 +10,7 @@ inputs:
   - name: ci-develop
 
 run:
-  path: ci-develop/tasks/run-shellcheck/run.sh
+  path: ci-develop/tasks/run-shellcheck/run.rb
 
 params:
   DIRECTORY_TO_CHECK:
