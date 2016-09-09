@@ -21,6 +21,14 @@ describe ShellChecker do
     it 'skips dotfiles' do
       expect(subject.keys).to_not include("#{fixture_dir}/.dotfile")
     end
+
+    it 'skips empty files' do
+      expect(subject.keys).to_not include("#{fixture_dir}/empty-file-which-should-be-skipped.sh")
+    end
+
+    it 'skips binary files that cause UTF-8 errors' do
+      expect(subject.keys).to_not include("#{fixture_dir}/compressed-file-which-should-be-ignored.tar.gz")
+    end
   end
 
   describe 'interpreting results' do
