@@ -21,14 +21,14 @@ jobs: ##########################################################################
     - task: pong-matcher-sails-smoke-test
       file: buildpacks-ci/tasks/sample-app-smoke-test/task.yml
       params:
-        BUILDPACK_NAME: nodejs
-        APPLICATION_NAME: pong_matcher_sails
-        APPLICATION_ROUTE:
-        PATH_TO_GET:
+        BUILDPACK_URL: https://github.com/cloudfoundry/nodejs-buildpack#develop
+        APPLICATION_NAME: sailspong
+        PATH_TO_GET: "/"
         CF_API: api.run.pivotal.io
         CF_USERNAME: {{pws-username}}
         CF_PASSWORD: {{pws-password}}
         CF_ORGANIZATION: {{pws-org}}
+        CF_DOMAIN: cfapps.io
 
 groups: ###################################################################################
 
