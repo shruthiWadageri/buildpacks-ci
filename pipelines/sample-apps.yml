@@ -28,6 +28,7 @@ jobs: ##########################################################################
         CF_USERNAME: {{pws-username}}
         CF_PASSWORD: {{pws-password}}
         CF_ORGANIZATION: {{pws-org}}
+        CF_LOGIN_SPACE: development
         CF_DOMAIN: cfapps.io
 
 groups: ###################################################################################
