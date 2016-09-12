@@ -1,0 +1,34 @@
+resources: ###################################################################################
+
+- name: buildpacks-ci
+  type: git
+  source:
+    uri: {{buildpacks-ci-git-uri-public}}
+    branch: test-sample-apps
+
+- name: pong-matcher-sails
+  type: git
+  source:
+    uri: https://github.com/cloudfoundry-samples/pong_matcher_sails.git
+
+jobs: ###################################################################################
+
+- name: pong-matcher-sails-smoke-test
+  plan:
+    - get: sample-app
+      resource: pong-matcher-sails
+    - get: buildpacks-ci
+    - task: pong-matcher-sails-smoke-test
+      file: buildpacks-ci/tasks/sample-app-smoke-test/task.yml
+      params:
+        BUILDPACK_NAME: nodejs
+        APPLICATION_NAME: pong_matcher_sails
+        CF_USERNAME: {{pws-username}}
+        CF_PASSWORD: {{pws-password}}
+        CF_ORGANIZATION: {{pws-org}}
+
+groups: ###################################################################################
+
+- name: nodejs-sample-apps
+  jobs:
+    - pong-matcher-sails-smoke-test
