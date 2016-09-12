@@ -10,8 +10,5 @@ inputs:
   - name: sample-app
   - name: buildpacks-ci
 
-outputs:
-  - name: buildpack-artifacts
-
 run:
   path: buildpacks-ci/tasks/sample-app-smoke-test/run.rb
