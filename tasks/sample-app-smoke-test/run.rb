@@ -16,8 +16,12 @@ def target_cf(cf_api, cf_username, cf_password, cf_organization, cf_login_space,
   puts `cf target -o #{cf_organization} -s #{cf_app_space}`
 end
 
-def push_app(buildpack_url)
+def push_app(buildpack_url, app_name)
   Dir.chdir('sample-app') do
+    if app_name == 'spring-music'
+      puts `./gradlew assemble`
+    end
+
     puts `cf push -b #{buildpack_url} --random-route`
   end
 end
@@ -58,7 +62,7 @@ if bind_mysql == '1'
   puts `cf create-service cleardb spark mysql`
 end
 
-push_app(buildpack_url)
+push_app(buildpack_url, app_name)
 
 app_route_host = get_app_route_host(app_name)
 
