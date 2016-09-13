@@ -6,23 +6,23 @@ resources: #####################################################################
     uri: {{buildpacks-ci-git-uri-public}}
     branch: test-sample-apps
 
-- name: pong-matcher-sails
+- name: cf-sample-app-nodejs
   type: git
   source:
-    uri: https://github.com/cloudfoundry-samples/pong_matcher_sails.git
+    uri: https://github.com/cloudfoundry-samples/cf-sample-app-nodejs.git
 
 jobs: ###################################################################################
 
-- name: pong-matcher-sails-smoke-test
+- name: cf-sample-app-nodejs-smoke-test
   plan:
     - get: sample-app
-      resource: pong-matcher-sails
+      resource: cf-sample-app-nodejs
     - get: buildpacks-ci
-    - task: pong-matcher-sails-smoke-test
+    - task: cf-sample-app-nodejs-smoke-test
       file: buildpacks-ci/tasks/sample-app-smoke-test/task.yml
       params:
         BUILDPACK_URL: https://github.com/cloudfoundry/nodejs-buildpack#develop
-        APPLICATION_NAME: sailspong
+        APPLICATION_NAME: cf-nodejs
         PATH_TO_GET: "/"
         CF_API: api.run.pivotal.io
         CF_USERNAME: {{pws-username}}
@@ -35,4 +35,4 @@ groups: ########################################################################
 
 - name: nodejs-sample-apps
   jobs:
-    - pong-matcher-sails-smoke-test
+    - cf-sample-app-nodejs-smoke-test

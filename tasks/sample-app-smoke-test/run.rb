@@ -41,13 +41,9 @@ puts cf_target_output
 Dir.chdir('sample-app') do
   cf_push_output = `cf push -b #{buildpack_url} --random-route`
   puts cf_push_output
-
-  if app_name == 'sailspong'
-    puts `cf create-service cleardb spark mysql`
-  end
 end
 
-apps = JSON.parse(`cf_curl '/v2/apps' -X GET -H 'Content-Type: application/x-www-form-urlencoded' -d 'q=name:#{app_name}'`)
+apps = JSON.parse(`cf curl '/v2/apps' -X GET -H 'Content-Type: application/x-www-form-urlencoded' -d 'q=name:#{app_name}'`)
 routes_url = apps['resources'].first['entity']['routes_url']
 
 routes = JSON.parse(`cf curl #{routes_url}`)
