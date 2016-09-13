@@ -4,9 +4,29 @@ require 'net/http'
 require 'json'
 
 def delete_space(space)
-  cf_delete_space_command = "cf delete-space #{space} -f"
-  cf_delete_space_output = `#{cf_delete_space_command}`
-  puts cf_delete_space_output
+  puts `cf delete-space #{space} -f`
+end
+
+def target_cf(cf_api, cf_username, cf_password, cf_organization, cf_login_space, cf_app_space)
+  puts `cf login -a #{cf_api} -u #{cf_username} -p #{cf_password} -o #{cf_organization} -s #{cf_login_space}`
+
+  puts `cf create-space #{cf_app_space}`
+
+  puts `cf target -o #{cf_organization} -s #{cf_app_space}`
+end
+
+def push_app(buildpack_url)
+  Dir.chdir('sample-app') do
+    puts `cf push -b #{buildpack_url} --random-route`
+  end
+end
+
+def get_app_route_host(app_name)
+  apps = JSON.parse(`cf curl '/v2/apps' -X GET -H 'Content-Type: application/x-www-form-urlencoded' -d 'q=name:#{app_name}'`)
+  routes_url = apps['resources'].first['entity']['routes_url']
+
+  routes = JSON.parse(`cf curl #{routes_url}`)
+  routes['resources'].first['entity']['host']
 end
 
 cf_api = ENV['CF_API']
@@ -15,47 +35,33 @@ cf_password = ENV['CF_PASSWORD']
 cf_organization = ENV['CF_ORGANIZATION']
 cf_domain = ENV['CF_DOMAIN']
 cf_login_space = ENV['CF_LOGIN_SPACE']
-cf_app_space = "sample-app-#{Random.rand(100000)}"
 app_name = ENV['APPLICATION_NAME']
 buildpack_url = ENV['BUILDPACK_URL']
 path_to_get = ENV['PATH_TO_GET']
+cf_app_space = "sample-app-#{Random.rand(100000)}"
 
-if cf_api.nil? || cf_username.nil? || cf_password.nil? || cf_organization.nil?
-  puts 'One of CF_API, CF_USERNAME, CF_PASSWORD, CF_ORGANIZATION is not set'
-  exit 1
+env_vars = %w(CF_API CF_USERNAME CF_PASSWORD CF_ORGANIZATION CF_DOMAIN CF_LOGIN_SPACE APPLICATION_NAME BUILDPACK_URL PATH_TO_GET)
+
+env_vars.each do |var|
+  if ENV[var].nil?
+    puts "#{var} is not set. Exiting..."
+    exit 1
+  end
 end
 
-cf_login_command = "cf login -a #{cf_api} -u #{cf_username} -p #{cf_password} -o #{cf_organization} -s #{cf_login_space}"
-cf_login_output = `#{cf_login_command}`
-puts cf_login_output
+target_cf(cf_api, cf_username, cf_password, cf_organization, cf_login_space, cf_app_space)
 
+push_app(buildpack_url)
 
-cf_create_space_command = "cf create-space #{cf_app_space}"
-cf_create_space_output = `#{cf_create_space_command}`
-puts cf_create_space_output
+app_route_host = get_app_route_host(app_name)
 
-cf_target_command = "cf target -o #{cf_organization} -s #{cf_app_space}"
-cf_target_output = `#{cf_target_command}`
-puts cf_target_output
+response = Net::HTTP.get_response("#{app_route_host}.#{cf_domain}",path_to_get)
 
-Dir.chdir('sample-app') do
-  cf_push_output = `cf push -b #{buildpack_url} --random-route`
-  puts cf_push_output
-end
-
-apps = JSON.parse(`cf curl '/v2/apps' -X GET -H 'Content-Type: application/x-www-form-urlencoded' -d 'q=name:#{app_name}'`)
-routes_url = apps['resources'].first['entity']['routes_url']
-
-routes = JSON.parse(`cf curl #{routes_url}`)
-host = routes['resources'].first['entity']['host']
-
-response = Net::HTTP.get_response("#{host}.#{cf_domain}",path_to_get)
+delete_space(cf_app_space)
 
 if response.code == "200"
   puts 'Got HTTP response 200. App push successful'
-  delete_space(cf_app_space)
 else
   puts "Got HTTP response #{response.code}. App push unsuccessful"
-  delete_space(cf_app_space)
   exit 1
 end
