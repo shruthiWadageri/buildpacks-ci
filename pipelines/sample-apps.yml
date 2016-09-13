@@ -16,6 +16,11 @@ resources: #####################################################################
   source:
     uri: https://github.com/cloudfoundry-samples/cf-sample-app-rails.git
 
+- name: cf-sample-app-spring
+  type: git
+  source:
+    uri: https://github.com/cloudfoundry-samples/cf-sample-app-spring.git
+
 - name: pong-matcher-rails
   type: git
   source:
@@ -48,6 +53,26 @@ jobs: ##########################################################################
       params:
         BUILDPACK_URL: https://github.com/cloudfoundry/nodejs-buildpack#develop
         APPLICATION_NAME: cf-nodejs
+        PATH_TO_GET: "/"
+        CF_API: api.run.pivotal.io
+        CF_USERNAME: {{pws-username}}
+        CF_PASSWORD: {{pws-password}}
+        CF_ORGANIZATION: {{pws-org}}
+        CF_LOGIN_SPACE: development
+        CF_DOMAIN: cfapps.io
+        REQUEST_TYPE: 'GET'
+        BIND_MYSQL: 0
+
+- name: cf-sample-app-spring-smoke-test
+  plan:
+    - get: sample-app
+      resource: cf-sample-app-spring
+    - get: buildpacks-ci
+    - task: cf-sample-app-spring-smoke-test
+      file: buildpacks-ci/tasks/sample-app-smoke-test/task.yml
+      params:
+        BUILDPACK_URL: https://github.com/cloudfoundry/java-buildpack
+        APPLICATION_NAME: cf-spring
         PATH_TO_GET: "/"
         CF_API: api.run.pivotal.io
         CF_USERNAME: {{pws-username}}
@@ -181,3 +206,4 @@ groups: ########################################################################
 - name: java-sample-apps
   jobs:
     - spring-music-smoke-test
+    - cf-sample-app-spring-smoke-test
