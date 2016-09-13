@@ -53,7 +53,7 @@ end
 
 target_cf(cf_api, cf_username, cf_password, cf_organization, cf_login_space, cf_app_space)
 
-if bind_mysql == 1
+if bind_mysql == '1'
   puts `cf create-service cleardb spark mysql`
 end
 
