@@ -21,6 +21,21 @@ resources: #####################################################################
   source:
     uri: https://github.com/cloudfoundry-samples/pong_matcher_rails.git
 
+- name: pong-matcher-django
+  type: git
+  source:
+    uri: https://github.com/cloudfoundry-samples/pong_matcher_django.git
+
+- name: pong-matcher-go
+  type: git
+  source:
+    uri: https://github.com/cloudfoundry-samples/pong_matcher_go.git
+
+- name: spring-music
+  type: git
+  source:
+    uri: https://github.com/cloudfoundry-samples/spring-music.git
+
 jobs: ###################################################################################
 
 - name: cf-sample-app-nodejs-smoke-test
@@ -86,7 +101,7 @@ jobs: ##########################################################################
 - name: pong-matcher-django-smoke-test
   plan:
     - get: sample-app
-      resource: pong-matcher-djange
+      resource: pong-matcher-django
     - get: buildpacks-ci
     - task: pong-matcher-django-smoke-test
       file: buildpacks-ci/tasks/sample-app-smoke-test/task.yml
@@ -103,6 +118,47 @@ jobs: ##########################################################################
         REQUEST_TYPE: 'DELETE'
         BIND_MYSQL: 1
 
+- name: pong-matcher-go-smoke-test
+  plan:
+    - get: sample-app
+      resource: pong-matcher-go
+    - get: buildpacks-ci
+    - task: pong-matcher-go-smoke-test
+      file: buildpacks-ci/tasks/sample-app-smoke-test/task.yml
+      params:
+        BUILDPACK_URL: https://github.com/cloudfoundry/go-buildpack#develop
+        APPLICATION_NAME: gopong
+        PATH_TO_GET: "/all"
+        CF_API: api.run.pivotal.io
+        CF_USERNAME: {{pws-username}}
+        CF_PASSWORD: {{pws-password}}
+        CF_ORGANIZATION: {{pws-org}}
+        CF_LOGIN_SPACE: development
+        CF_DOMAIN: cfapps.io
+        REQUEST_TYPE: 'DELETE'
+        BIND_MYSQL: 1
+
+- name: spring-music-smoke-test
+  plan:
+    - get: sample-app
+      resource: spring-music
+    - get: buildpacks-ci
+    - task: spring-music-smoke-test
+      file: buildpacks-ci/tasks/sample-app-smoke-test/task.yml
+      params:
+        BUILDPACK_URL: https://github.com/cloudfoundry/java-buildpack
+        APPLICATION_NAME: spring-music
+        PATH_TO_GET: "/"
+        CF_API: api.run.pivotal.io
+        CF_USERNAME: {{pws-username}}
+        CF_PASSWORD: {{pws-password}}
+        CF_ORGANIZATION: {{pws-org}}
+        CF_LOGIN_SPACE: development
+        CF_DOMAIN: cfapps.io
+        REQUEST_TYPE: 'GET'
+        BIND_MYSQL: 0
+
+
 groups: ###################################################################################
 
 - name: nodejs-sample-apps
@@ -117,3 +173,11 @@ groups: ########################################################################
 - name: python-sample-apps
   jobs:
     - pong-matcher-django-smoke-test
+
+- name: go-sample-apps
+  jobs:
+    - pong-matcher-go-smoke-test
+
+- name: java-sample-apps
+  jobs:
+    - spring-music-smoke-test
