@@ -40,6 +40,7 @@ jobs: ##########################################################################
         CF_ORGANIZATION: {{pws-org}}
         CF_LOGIN_SPACE: development
         CF_DOMAIN: cfapps.io
+        REQUEST_TYPE: 'GET'
         BIND_MYSQL: 0
 
 - name: cf-sample-app-rails-smoke-test
@@ -59,6 +60,7 @@ jobs: ##########################################################################
         CF_ORGANIZATION: {{pws-org}}
         CF_LOGIN_SPACE: development
         CF_DOMAIN: cfapps.io
+        REQUEST_TYPE: 'GET'
         BIND_MYSQL: 0
 
 - name: pong-matcher-rails-smoke-test
@@ -78,8 +80,28 @@ jobs: ##########################################################################
         CF_ORGANIZATION: {{pws-org}}
         CF_LOGIN_SPACE: development
         CF_DOMAIN: cfapps.io
+        REQUEST_TYPE: 'DELETE'
         BIND_MYSQL: 1
 
+- name: pong-matcher-django-smoke-test
+  plan:
+    - get: sample-app
+      resource: pong-matcher-djange
+    - get: buildpacks-ci
+    - task: pong-matcher-django-smoke-test
+      file: buildpacks-ci/tasks/sample-app-smoke-test/task.yml
+      params:
+        BUILDPACK_URL: https://github.com/cloudfoundry/python-buildpack#develop
+        APPLICATION_NAME: djangopong
+        PATH_TO_GET: "/all"
+        CF_API: api.run.pivotal.io
+        CF_USERNAME: {{pws-username}}
+        CF_PASSWORD: {{pws-password}}
+        CF_ORGANIZATION: {{pws-org}}
+        CF_LOGIN_SPACE: development
+        CF_DOMAIN: cfapps.io
+        REQUEST_TYPE: 'DELETE'
+        BIND_MYSQL: 1
 
 groups: ###################################################################################
 
@@ -91,3 +113,7 @@ groups: ########################################################################
   jobs:
     - cf-sample-app-rails-smoke-test
     - pong-matcher-rails-smoke-test
+
+- name: python-sample-apps
+  jobs:
+    - pong-matcher-django-smoke-test
