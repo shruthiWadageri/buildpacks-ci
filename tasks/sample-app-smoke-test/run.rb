@@ -35,6 +35,19 @@ def get_app_route_host(app_name)
   routes['resources'].first['entity']['host']
 end
 
+def get_app_response(host, domain, path, type)
+  request_uri = URI("https://#{host}.#{domain}#{path}")
+
+  Net::HTTP.start(request_uri.host, request_uri.port, :use_ssl => true) do |http|
+    req = case type
+            when 'DELETE' then Net::HTTP::Delete.new(request_uri)
+            when 'GET' then Net::HTTP::Get.new(request_uri)
+            else raise "Invalid request type #{type}"
+          end
+    http.request(req)
+  end
+end
+
 cf_api = ENV['CF_API']
 cf_username = ENV['CF_USERNAME']
 cf_password = ENV['CF_PASSWORD']
@@ -43,12 +56,12 @@ cf_domain = ENV['CF_DOMAIN']
 cf_login_space = ENV['CF_LOGIN_SPACE']
 app_name = ENV['APPLICATION_NAME']
 buildpack_url = ENV['BUILDPACK_URL']
-path_to_get = ENV['PATH_TO_GET']
+request_path = ENV['REQUEST_PATH']
 bind_mysql = ENV['BIND_MYSQL']
 request_type = ENV['REQUEST_TYPE']
 cf_app_space = "sample-app-#{Random.rand(100000)}"
 
-env_vars = %w(CF_API CF_USERNAME CF_PASSWORD CF_ORGANIZATION CF_DOMAIN CF_LOGIN_SPACE APPLICATION_NAME BUILDPACK_URL PATH_TO_GET BIND_MYSQL REQUEST_TYPE)
+env_vars = %w(CF_API CF_USERNAME CF_PASSWORD CF_ORGANIZATION CF_DOMAIN CF_LOGIN_SPACE APPLICATION_NAME BUILDPACK_URL REQUEST_PATH BIND_MYSQL REQUEST_TYPE)
 
 env_vars.each do |var|
   if ENV[var].nil?
@@ -67,16 +80,7 @@ push_app(buildpack_url, app_name)
 
 app_route_host = get_app_route_host(app_name)
 
-request_uri = URI("https://#{app_route_host}.#{cf_domain}#{path_to_get}")
-
-response = Net::HTTP.start(request_uri.host, request_uri.port, :use_ssl => true) do |http|
-    req = case request_type
-            when 'DELETE' then Net::HTTP::Delete.new(request_uri)
-            when 'GET' then Net::HTTP::Get.new(request_uri)
-            else raise "Invalid request type #{request_type}"
-          end
-    http.request(req)
-end
+response = get_app_response(app_route_host, cf_domain, request_path, request_type)
 
 delete_space(cf_app_space)
 

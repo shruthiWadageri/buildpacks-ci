@@ -53,7 +53,7 @@ jobs: ##########################################################################
       params:
         BUILDPACK_URL: https://github.com/cloudfoundry/nodejs-buildpack#develop
         APPLICATION_NAME: cf-nodejs
-        PATH_TO_GET: "/"
+        REQUEST_PATH: "/"
         CF_API: api.run.pivotal.io
         CF_USERNAME: {{pws-username}}
         CF_PASSWORD: {{pws-password}}
@@ -73,7 +73,7 @@ jobs: ##########################################################################
       params:
         BUILDPACK_URL: https://github.com/cloudfoundry/java-buildpack
         APPLICATION_NAME: cf-spring
-        PATH_TO_GET: "/"
+        REQUEST_PATH: "/"
         CF_API: api.run.pivotal.io
         CF_USERNAME: {{pws-username}}
         CF_PASSWORD: {{pws-password}}
@@ -93,7 +93,7 @@ jobs: ##########################################################################
       params:
         BUILDPACK_URL: https://github.com/cloudfoundry/ruby-buildpack#develop
         APPLICATION_NAME: cf-rails
-        PATH_TO_GET: "/"
+        REQUEST_PATH: "/"
         CF_API: api.run.pivotal.io
         CF_USERNAME: {{pws-username}}
         CF_PASSWORD: {{pws-password}}
@@ -113,7 +113,7 @@ jobs: ##########################################################################
       params:
         BUILDPACK_URL: https://github.com/cloudfoundry/ruby-buildpack#develop
         APPLICATION_NAME: railspong
-        PATH_TO_GET: "/all"
+        REQUEST_PATH: "/all"
         CF_API: api.run.pivotal.io
         CF_USERNAME: {{pws-username}}
         CF_PASSWORD: {{pws-password}}
@@ -133,7 +133,7 @@ jobs: ##########################################################################
       params:
         BUILDPACK_URL: https://github.com/cloudfoundry/python-buildpack#develop
         APPLICATION_NAME: djangopong
-        PATH_TO_GET: "/all"
+        REQUEST_PATH: "/all"
         CF_API: api.run.pivotal.io
         CF_USERNAME: {{pws-username}}
         CF_PASSWORD: {{pws-password}}
@@ -153,7 +153,7 @@ jobs: ##########################################################################
       params:
         BUILDPACK_URL: https://github.com/cloudfoundry/go-buildpack#develop
         APPLICATION_NAME: gopong
-        PATH_TO_GET: "/all"
+        REQUEST_PATH: "/all"
         CF_API: api.run.pivotal.io
         CF_USERNAME: {{pws-username}}
         CF_PASSWORD: {{pws-password}}
@@ -173,7 +173,7 @@ jobs: ##########################################################################
       params:
         BUILDPACK_URL: https://github.com/cloudfoundry/java-buildpack
         APPLICATION_NAME: spring-music
-        PATH_TO_GET: "/"
+        REQUEST_PATH: "/"
         CF_API: api.run.pivotal.io
         CF_USERNAME: {{pws-username}}
         CF_PASSWORD: {{pws-password}}
