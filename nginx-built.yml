@@ -45,3 +45,18 @@ nginx:
     =kC5f
     -----END PGP SIGNATURE-----
   timestamp: 2016-07-26 16:05:48 UTC
+- version: 1.11.4
+  gpg-rsa-key-id: A1C052F8
+  gpg-signature: |
+    -----BEGIN PGP SIGNATURE-----
+    Version: GnuPG v2
+
+    iQEcBAABCAAGBQJX2B3pAAoJEFIKmZOhwFL46d4H/3/d5OZyxzc6fmpr4MvonsNq
+    JEoeHJQ2Rz23nB9tzqgsNEIIu8t6PpgvlKxd1lvVAz99JAEJuwU72PAb6ZHVm3ov
+    G7YD9m+mLYjsrirdF8KkQqqPnf51eGBiICPR2lndD/kIZp/pvVZ/RsQUXoljiZmh
+    6REFAMqlClKep42wRZXeMdcoGBHsWw0WPIewXHZIpgNUD2Cv4eeCSORX8nyF93JD
+    +WoBVyjXmXBqEkPS8a+l2zohHBAIvKq2T4A2HEWyJnM3sAK18rbWgTTJ6fxUqS5I
+    DmJGqiLUHjzeG8X5pmhI8tOXwJUP7qR4VZevu0FvziIOJtzJ0leK0XbrC/EjOZs=
+    =F2t5
+    -----END PGP SIGNATURE-----
+  timestamp: 2016-09-13 16:06:09 UTC
