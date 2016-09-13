@@ -40,6 +40,7 @@ jobs: ##########################################################################
         CF_ORGANIZATION: {{pws-org}}
         CF_LOGIN_SPACE: development
         CF_DOMAIN: cfapps.io
+        BIND_MYSQL: 0
 
 - name: cf-sample-app-rails-smoke-test
   plan:
@@ -58,13 +59,14 @@ jobs: ##########################################################################
         CF_ORGANIZATION: {{pws-org}}
         CF_LOGIN_SPACE: development
         CF_DOMAIN: cfapps.io
+        BIND_MYSQL: 0
 
 - name: pong-matcher-rails-smoke-test
   plan:
     - get: sample-app
       resource: pong-matcher-rails
     - get: buildpacks-ci
-    - task: cf-sample-app-rails-smoke-test
+    - task: pong-matcher-rails-smoke-test
       file: buildpacks-ci/tasks/sample-app-smoke-test/task.yml
       params:
         BUILDPACK_URL: https://github.com/cloudfoundry/ruby-buildpack#develop
@@ -76,6 +78,7 @@ jobs: ##########################################################################
         CF_ORGANIZATION: {{pws-org}}
         CF_LOGIN_SPACE: development
         CF_DOMAIN: cfapps.io
+        BIND_MYSQL: 1
 
 
 groups: ###################################################################################

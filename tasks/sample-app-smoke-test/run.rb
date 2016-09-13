@@ -39,9 +39,10 @@ cf_login_space = ENV['CF_LOGIN_SPACE']
 app_name = ENV['APPLICATION_NAME']
 buildpack_url = ENV['BUILDPACK_URL']
 path_to_get = ENV['PATH_TO_GET']
+bind_mysql = ENV['BIND_MYSQL']
 cf_app_space = "sample-app-#{Random.rand(100000)}"
 
-env_vars = %w(CF_API CF_USERNAME CF_PASSWORD CF_ORGANIZATION CF_DOMAIN CF_LOGIN_SPACE APPLICATION_NAME BUILDPACK_URL PATH_TO_GET)
+env_vars = %w(CF_API CF_USERNAME CF_PASSWORD CF_ORGANIZATION CF_DOMAIN CF_LOGIN_SPACE APPLICATION_NAME BUILDPACK_URL PATH_TO_GET BIND_MYSQL)
 
 env_vars.each do |var|
   if ENV[var].nil?
@@ -51,6 +52,10 @@ env_vars.each do |var|
 end
 
 target_cf(cf_api, cf_username, cf_password, cf_organization, cf_login_space, cf_app_space)
+
+if bind_mysql == 1
+  puts `cf create-service cleardb spark mysql`
+end
 
 push_app(buildpack_url)
 
