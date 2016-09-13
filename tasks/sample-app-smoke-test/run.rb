@@ -1,5 +1,6 @@
 #!/usr/bin/env ruby
 
+require 'uri'
 require 'net/http'
 require 'json'
 
@@ -55,7 +56,16 @@ push_app(buildpack_url)
 
 app_route_host = get_app_route_host(app_name)
 
-response = Net::HTTP.get_response("#{app_route_host}.#{cf_domain}",path_to_get)
+request_uri = URI("https://#{app_route_host}.#{cf_domain}#{path_to_get}")
+
+if app_name == 'railspong'
+  response = Net::HTTP.start(request_uri.host, request_uri.port, :use_ssl => true) do |http|
+    req = Net::HTTP::Delete.new(request_uri)
+    http.request(req)
+  end
+else
+  response = Net::HTTP.get_response("#{app_route_host}.#{cf_domain}",path_to_get)
+end
 
 delete_space(cf_app_space)
 
