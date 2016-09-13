@@ -19,6 +19,7 @@ end
 def push_app(buildpack_url, app_name)
   Dir.chdir('sample-app') do
     if app_name == 'spring-music'
+      `apt-get update && apt-get install -y openjdk-7-jdk`
       puts `./gradlew assemble`
     end
 
