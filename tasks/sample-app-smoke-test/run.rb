@@ -48,6 +48,15 @@ def get_app_response(host, domain, path, type)
   end
 end
 
+def bind_database(database)
+  case database
+    when 'mysql'
+      puts `cf create-service cleardb spark mysql`
+    when 'pgsql'
+      puts `cf create-service elephantsql turtle pgsql`
+  end
+end
+
 cf_api = ENV['CF_API']
 cf_username = ENV['CF_USERNAME']
 cf_password = ENV['CF_PASSWORD']
@@ -57,11 +66,11 @@ cf_login_space = ENV['CF_LOGIN_SPACE']
 app_name = ENV['APPLICATION_NAME']
 buildpack_url = ENV['BUILDPACK_URL']
 request_path = ENV['REQUEST_PATH']
-bind_mysql = ENV['BIND_MYSQL']
+database_to_bind = ENV['DATABASE_TO_BIND']
 request_type = ENV['REQUEST_TYPE']
 cf_app_space = "sample-app-#{Random.rand(100000)}"
 
-env_vars = %w(CF_API CF_USERNAME CF_PASSWORD CF_ORGANIZATION CF_DOMAIN CF_LOGIN_SPACE APPLICATION_NAME BUILDPACK_URL REQUEST_PATH BIND_MYSQL REQUEST_TYPE)
+env_vars = %w(CF_API CF_USERNAME CF_PASSWORD CF_ORGANIZATION CF_DOMAIN CF_LOGIN_SPACE APPLICATION_NAME BUILDPACK_URL REQUEST_PATH DATABASE_TO_BIND REQUEST_TYPE)
 
 env_vars.each do |var|
   if ENV[var].nil?
@@ -72,9 +81,7 @@ end
 
 target_cf(cf_api, cf_username, cf_password, cf_organization, cf_login_space, cf_app_space)
 
-if bind_mysql == '1'
-  puts `cf create-service cleardb spark mysql`
-end
+bind_database(database_to_bind)
 
 push_app(buildpack_url, app_name)
 
