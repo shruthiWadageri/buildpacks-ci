@@ -51,6 +51,11 @@ resources: #####################################################################
   source:
     uri: https://github.com/cloudfoundry-samples/spring-music.git
 
+- name: cf-ex-phpmyadmin
+  type: git
+  source:
+    uri: https://github.com/cloudfoundry-samples/cf-ex-phpmyadmin.git
+
 jobs: ###################################################################################
 
 - name: cf-sample-app-nodejs-smoke-test
@@ -231,7 +236,27 @@ jobs: ##########################################################################
         CF_LOGIN_SPACE: development
         CF_DOMAIN: cfapps.io
         REQUEST_TYPE: 'GET'
-        DATABSE_TO_BIND: none
+        DATABASE_TO_BIND: none
+
+- name: cf-ex-phpmyadmin-smoke-test
+  plan:
+    - get: sample-app
+      resource: cf-ex-phpmyadmin
+    - get: buildpacks-ci
+    - task: cf-ex-phpmyadmin-smoke-test
+      file: buildpacks-ci/tasks/sample-app-smoke-test/task.yml
+      params:
+        BUILDPACK_URL: https://github.com/cloudfoundry/php-buildpack#develop
+        APPLICATION_NAME: cf-ex-phpmyadmin
+        REQUEST_PATH: "/"
+        CF_API: api.run.pivotal.io
+        CF_USERNAME: {{pws-username}}
+        CF_PASSWORD: {{pws-password}}
+        CF_ORGANIZATION: {{pws-org}}
+        CF_LOGIN_SPACE: development
+        CF_DOMAIN: cfapps.io
+        REQUEST_TYPE: 'GET'
+        DATABASE_TO_BIND: 'mysql'
 
 
 groups: ###################################################################################
@@ -262,3 +287,4 @@ groups: ########################################################################
 - name: php-sample-apps
   jobs:
     - pong-matcher-slim-smoke-test
+    - cf-ex-phpmyadmin-smoke-test
