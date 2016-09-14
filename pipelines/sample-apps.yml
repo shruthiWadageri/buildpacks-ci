@@ -1,4 +1,15 @@
+resource_types:
+- name: cron-resource
+  type: docker-image
+  source:
+    repository: cftoolsmiths/cron-test
+
 resources: ###################################################################################
+- name: nightly-trigger
+  type: cron-resource
+  source:
+    expression: 0 4 * * *
+    location: {{current-timezone}}
 
 - name: buildpacks-ci
   type: git
@@ -95,6 +106,8 @@ jobs: ##########################################################################
 
 - name: cf-sample-app-nodejs-smoke-test
   plan:
+    - get: nightly-trigger
+      trigger: true
     - get: sample-app
       resource: cf-sample-app-nodejs
     - get: buildpacks-ci
@@ -115,6 +128,8 @@ jobs: ##########################################################################
 
 - name: cf-sample-app-spring-smoke-test
   plan:
+    - get: nightly-trigger
+      trigger: true
     - get: sample-app
       resource: cf-sample-app-spring
     - get: buildpacks-ci
@@ -135,6 +150,8 @@ jobs: ##########################################################################
 
 - name: cf-sample-app-rails-smoke-test
   plan:
+    - get: nightly-trigger
+      trigger: true
     - get: sample-app
       resource: cf-sample-app-rails
     - get: buildpacks-ci
@@ -155,6 +172,8 @@ jobs: ##########################################################################
 
 - name: pong-matcher-rails-smoke-test
   plan:
+    - get: nightly-trigger
+      trigger: true
     - get: sample-app
       resource: pong-matcher-rails
     - get: buildpacks-ci
@@ -175,6 +194,8 @@ jobs: ##########################################################################
 
 - name: pong-matcher-sails-smoke-test
   plan:
+    - get: nightly-trigger
+      trigger: true
     - get: sample-app
       resource: pong-matcher-sails
     - get: buildpacks-ci
@@ -195,6 +216,8 @@ jobs: ##########################################################################
 
 - name: pong-matcher-slim-smoke-test
   plan:
+    - get: nightly-trigger
+      trigger: true
     - get: sample-app
       resource: pong-matcher-slim
     - get: buildpacks-ci
@@ -215,6 +238,8 @@ jobs: ##########################################################################
 
 - name: pong-matcher-django-smoke-test
   plan:
+    - get: nightly-trigger
+      trigger: true
     - get: sample-app
       resource: pong-matcher-django
     - get: buildpacks-ci
@@ -235,6 +260,8 @@ jobs: ##########################################################################
 
 - name: pong-matcher-go-smoke-test
   plan:
+    - get: nightly-trigger
+      trigger: true
     - get: sample-app
       resource: pong-matcher-go
     - get: buildpacks-ci
@@ -255,6 +282,8 @@ jobs: ##########################################################################
 
 - name: spring-music-smoke-test
   plan:
+    - get: nightly-trigger
+      trigger: true
     - get: sample-app
       resource: spring-music
     - get: buildpacks-ci
@@ -275,6 +304,8 @@ jobs: ##########################################################################
 
 - name: cf-ex-phpmyadmin-smoke-test
   plan:
+    - get: nightly-trigger
+      trigger: true
     - get: sample-app
       resource: cf-ex-phpmyadmin
     - get: buildpacks-ci
@@ -295,6 +326,8 @@ jobs: ##########################################################################
 
 - name: cf-ex-drupal-smoke-test
   plan:
+    - get: nightly-trigger
+      trigger: true
     - get: sample-app
       resource: cf-ex-drupal
     - get: buildpacks-ci
@@ -315,6 +348,8 @@ jobs: ##########################################################################
 
 - name: cf-ex-code-igniter-smoke-test
   plan:
+    - get: nightly-trigger
+      trigger: true
     - get: sample-app
       resource: cf-ex-code-igniter
     - get: buildpacks-ci
@@ -335,6 +370,8 @@ jobs: ##########################################################################
 
 - name: cf-ex-phppgadmin-smoke-test
   plan:
+    - get: nightly-trigger
+      trigger: true
     - get: sample-app
       resource: cf-ex-phppgadmin
     - get: buildpacks-ci
@@ -355,6 +392,8 @@ jobs: ##########################################################################
 
 - name: cf-ex-php-info-smoke-test
   plan:
+    - get: nightly-trigger
+      trigger: true
     - get: sample-app
       resource: cf-ex-php-info
     - get: buildpacks-ci
@@ -375,6 +414,8 @@ jobs: ##########################################################################
 
 - name: cf-ex-pgbouncer-smoke-test
   plan:
+    - get: nightly-trigger
+      trigger: true
     - get: sample-app
       resource: cf-ex-pgbouncer
     - get: buildpacks-ci
@@ -395,6 +436,8 @@ jobs: ##########################################################################
 
 - name: cf-ex-composer-smoke-test
   plan:
+    - get: nightly-trigger
+      trigger: true
     - get: sample-app
       resource: cf-ex-composer
     - get: buildpacks-ci
@@ -415,6 +458,8 @@ jobs: ##########################################################################
 
 - name: cf-ex-phalcon-smoke-test
   plan:
+    - get: nightly-trigger
+      trigger: true
     - get: sample-app
       resource: cf-ex-phalcon
     - get: buildpacks-ci
