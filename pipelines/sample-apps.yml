@@ -476,7 +476,7 @@ jobs: ##########################################################################
         CF_LOGIN_SPACE: development
         CF_DOMAIN: cfapps.io
         REQUEST_TYPE: 'GET'
-        DATABASE_TO_BIND: 'none'
+        DATABASE_TO_BIND: 'mysql'
 
 groups: ###################################################################################
 
