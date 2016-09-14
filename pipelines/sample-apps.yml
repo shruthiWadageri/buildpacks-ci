@@ -56,6 +56,41 @@ resources: #####################################################################
   source:
     uri: https://github.com/cloudfoundry-samples/cf-ex-phpmyadmin.git
 
+- name: cf-ex-drupal
+  type: git
+  source:
+    uri: https://github.com/cloudfoundry-samples/cf-ex-drupal.git
+
+- name: cf-ex-code-igniter
+  type: git
+  source:
+    uri: https://github.com/cloudfoundry-samples/cf-ex-code-igniter.git
+
+- name: cf-ex-phppgadmin
+  type: git
+  source:
+    uri: https://github.com/cloudfoundry-samples/cf-ex-phppgadmin.git
+
+- name: cf-ex-php-info
+  type: git
+  source:
+    uri: https://github.com/cloudfoundry-samples/cf-ex-php-info.git
+
+- name: cf-ex-pgbouncer
+  type: git
+  source:
+    uri: https://github.com/cloudfoundry-samples/cf-ex-pgbouncer.git
+
+- name: cf-ex-composer
+  type: git
+  source:
+    uri: https://github.com/cloudfoundry-samples/cf-ex-composer.git
+
+- name: cf-ex-phalcon
+  type: git
+  source:
+    uri: https://github.com/cloudfoundry-samples/cf-ex-phalcon.git
+
 jobs: ###################################################################################
 
 - name: cf-sample-app-nodejs-smoke-test
@@ -258,6 +293,145 @@ jobs: ##########################################################################
         REQUEST_TYPE: 'GET'
         DATABASE_TO_BIND: 'mysql'
 
+- name: cf-ex-drupal-smoke-test
+  plan:
+    - get: sample-app
+      resource: cf-ex-drupal
+    - get: buildpacks-ci
+    - task: cf-ex-drupal-smoke-test
+      file: buildpacks-ci/tasks/sample-app-smoke-test/task.yml
+      params:
+        BUILDPACK_URL: https://github.com/cloudfoundry/php-buildpack#develop
+        APPLICATION_NAME: cf-ex-drupal
+        REQUEST_PATH: "/install.php"
+        CF_API: api.run.pivotal.io
+        CF_USERNAME: {{pws-username}}
+        CF_PASSWORD: {{pws-password}}
+        CF_ORGANIZATION: {{pws-org}}
+        CF_LOGIN_SPACE: development
+        CF_DOMAIN: cfapps.io
+        REQUEST_TYPE: 'GET'
+        DATABASE_TO_BIND: 'mysql'
+
+- name: cf-ex-code-igniter-smoke-test
+  plan:
+    - get: sample-app
+      resource: cf-ex-code-igniter
+    - get: buildpacks-ci
+    - task: cf-ex-code-igniter-smoke-test
+      file: buildpacks-ci/tasks/sample-app-smoke-test/task.yml
+      params:
+        BUILDPACK_URL: https://github.com/cloudfoundry/php-buildpack#develop
+        APPLICATION_NAME: cf-ex-code-igniter
+        REQUEST_PATH: "/index.php"
+        CF_API: api.run.pivotal.io
+        CF_USERNAME: {{pws-username}}
+        CF_PASSWORD: {{pws-password}}
+        CF_ORGANIZATION: {{pws-org}}
+        CF_LOGIN_SPACE: development
+        CF_DOMAIN: cfapps.io
+        REQUEST_TYPE: 'GET'
+        DATABASE_TO_BIND: 'mysql'
+
+- name: cf-ex-phppgadmin-smoke-test
+  plan:
+    - get: sample-app
+      resource: cf-ex-phppgadmin
+    - get: buildpacks-ci
+    - task: cf-ex-phppgadmin-smoke-test
+      file: buildpacks-ci/tasks/sample-app-smoke-test/task.yml
+      params:
+        BUILDPACK_URL: https://github.com/cloudfoundry/php-buildpack#develop
+        APPLICATION_NAME: cf-ex-phppgadmin
+        REQUEST_PATH: "/"
+        CF_API: api.run.pivotal.io
+        CF_USERNAME: {{pws-username}}
+        CF_PASSWORD: {{pws-password}}
+        CF_ORGANIZATION: {{pws-org}}
+        CF_LOGIN_SPACE: development
+        CF_DOMAIN: cfapps.io
+        REQUEST_TYPE: 'GET'
+        DATABASE_TO_BIND: 'pgsql'
+
+- name: cf-ex-php-info-smoke-test
+  plan:
+    - get: sample-app
+      resource: cf-ex-php-info
+    - get: buildpacks-ci
+    - task: cf-ex-php-info-smoke-test
+      file: buildpacks-ci/tasks/sample-app-smoke-test/task.yml
+      params:
+        BUILDPACK_URL: https://github.com/cloudfoundry/php-buildpack#develop
+        APPLICATION_NAME: cf-ex-php-info
+        REQUEST_PATH: "/"
+        CF_API: api.run.pivotal.io
+        CF_USERNAME: {{pws-username}}
+        CF_PASSWORD: {{pws-password}}
+        CF_ORGANIZATION: {{pws-org}}
+        CF_LOGIN_SPACE: development
+        CF_DOMAIN: cfapps.io
+        REQUEST_TYPE: 'GET'
+        DATABASE_TO_BIND: 'none'
+
+- name: cf-ex-pgbouncer-smoke-test
+  plan:
+    - get: sample-app
+      resource: cf-ex-pgbouncer
+    - get: buildpacks-ci
+    - task: cf-ex-pgbouncer-smoke-test
+      file: buildpacks-ci/tasks/sample-app-smoke-test/task.yml
+      params:
+        BUILDPACK_URL: https://github.com/cloudfoundry/php-buildpack#develop
+        APPLICATION_NAME: cf-ex-pgbouncer
+        REQUEST_PATH: "/"
+        CF_API: api.run.pivotal.io
+        CF_USERNAME: {{pws-username}}
+        CF_PASSWORD: {{pws-password}}
+        CF_ORGANIZATION: {{pws-org}}
+        CF_LOGIN_SPACE: development
+        CF_DOMAIN: cfapps.io
+        REQUEST_TYPE: 'GET'
+        DATABASE_TO_BIND: 'pgsql'
+
+- name: cf-ex-composer-smoke-test
+  plan:
+    - get: sample-app
+      resource: cf-ex-composer
+    - get: buildpacks-ci
+    - task: cf-ex-composer-smoke-test
+      file: buildpacks-ci/tasks/sample-app-smoke-test/task.yml
+      params:
+        BUILDPACK_URL: https://github.com/cloudfoundry/php-buildpack#develop
+        APPLICATION_NAME: cf-ex-composer
+        REQUEST_PATH: "/"
+        CF_API: api.run.pivotal.io
+        CF_USERNAME: {{pws-username}}
+        CF_PASSWORD: {{pws-password}}
+        CF_ORGANIZATION: {{pws-org}}
+        CF_LOGIN_SPACE: development
+        CF_DOMAIN: cfapps.io
+        REQUEST_TYPE: 'GET'
+        DATABASE_TO_BIND: 'none'
+
+- name: cf-ex-phalcon-smoke-test
+  plan:
+    - get: sample-app
+      resource: cf-ex-phalcon
+    - get: buildpacks-ci
+    - task: cf-ex-phalcon-smoke-test
+      file: buildpacks-ci/tasks/sample-app-smoke-test/task.yml
+      params:
+        BUILDPACK_URL: https://github.com/cloudfoundry/php-buildpack#develop
+        APPLICATION_NAME: cf-ex-phalcon
+        REQUEST_PATH: "/"
+        CF_API: api.run.pivotal.io
+        CF_USERNAME: {{pws-username}}
+        CF_PASSWORD: {{pws-password}}
+        CF_ORGANIZATION: {{pws-org}}
+        CF_LOGIN_SPACE: development
+        CF_DOMAIN: cfapps.io
+        REQUEST_TYPE: 'GET'
+        DATABASE_TO_BIND: 'none'
 
 groups: ###################################################################################
 
@@ -288,3 +462,10 @@ groups: ########################################################################
   jobs:
     - pong-matcher-slim-smoke-test
     - cf-ex-phpmyadmin-smoke-test
+    - cf-ex-drupal-smoke-test
+    - cf-ex-code-igniter-smoke-test
+    - cf-ex-phppgadmin-smoke-test
+    - cf-ex-php-info-smoke-test
+    - cf-ex-pgbouncer-smoke-test
+    - cf-ex-composer-smoke-test
+    - cf-ex-phalcon-smoke-test
