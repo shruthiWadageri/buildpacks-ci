@@ -4,7 +4,10 @@ require 'fileutils'
 
 Dir.chdir('buildpack') do
   tag_to_add = "v#{File.read('VERSION')}".strip
+  puts "Tag to add: #{tag_to_add}"
+
   existing_tags = `git tag`.split("\n")
+  puts "Existing tags: #{existing_tags}"
 
   if existing_tags.include? tag_to_add
     puts "Tag #{tag_to_add} already exists"
@@ -17,7 +20,7 @@ Dir.chdir('buildpack') do
     FileUtils.mv(uncached_buildpack, output_uncached)
     FileUtils.mv(cached_buildpack, output_cached)
   else
-    `git tag #{tag_to_add}`
+    puts `git tag #{tag_to_add}`
     system(<<~EOF)
               export BUNDLE_GEMFILE=cf.Gemfile
               bundle config mirror.https://rubygems.org ${RUBYGEM_MIRROR}
