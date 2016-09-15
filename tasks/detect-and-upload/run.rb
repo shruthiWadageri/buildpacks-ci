@@ -11,8 +11,11 @@ Dir.chdir('buildpack') do
     uncached_buildpack = Dir["../pivotal-buildpack/*.zip"].first
     cached_buildpack = Dir["../pivotal-buildpack-cached/*.zip"].first
 
-    FileUtils.mv(uncached_buildpack,  '../buildpacks-artifacts/')
-    FileUtils.mv(cached_buildpack, '../buildpack-artifacts/')
+    output_uncached = File.join('..', 'buildpacks-artifacts', File.basename(uncached_buildpack))
+    output_cached = File.join('..', 'buildpacks-artifacts', File.basename(cached_buildpack))
+
+    FileUtils.mv(uncached_buildpack, ouptput_uncached)
+    FileUtils.mv(cached_buildpack, output_cached)
   else
     `git tag #{tag_to_add}`
     system(<<~EOF)
