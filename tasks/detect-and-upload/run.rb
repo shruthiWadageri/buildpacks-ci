@@ -13,8 +13,8 @@ Dir.chdir('buildpack') do
     uncached_buildpack = Dir["../pivotal-buildpack/*.zip"].first
     cached_buildpack = Dir["../pivotal-buildpack-cached/*.zip"].first
 
-    output_uncached = File.join('..', 'buildpacks-artifacts', File.basename(uncached_buildpack))
-    output_cached = File.join('..', 'buildpacks-artifacts', File.basename(cached_buildpack))
+    output_uncached = File.join('..', 'buildpack-artifacts', File.basename(uncached_buildpack))
+    output_cached = File.join('..', 'buildpack-artifacts', File.basename(cached_buildpack))
 
     FileUtils.mv(uncached_buildpack, output_uncached)
     FileUtils.mv(cached_buildpack, output_cached)
