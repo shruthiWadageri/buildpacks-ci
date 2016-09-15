@@ -4,9 +4,7 @@ require 'fileutils'
 
 Dir.chdir('buildpack') do
   tag_to_add = "v#{File.read('VERSION')}".strip
-  puts tag_to_add
   existing_tags = `git tag`.split("\n")
-  puts existing_tags
 
   if existing_tags.include? tag_to_add
     puts "Tag #{tag_to_add} already exists"
