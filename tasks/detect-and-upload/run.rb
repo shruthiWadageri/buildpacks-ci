@@ -3,7 +3,7 @@
 require 'fileutils'
 
 Dir.chdir('buildpack') do
-  tag_to_add = "v#{File.read('VERSION')}"
+  tag_to_add = "v#{File.read('VERSION')}".strip
   existing_tags = `git tag`.split("\n")
 
   if existing_tags.include? tag_to_add
@@ -37,7 +37,7 @@ Dir.chdir('buildpack') do
       end
     end
 
-    Dir.chdir('buildpack-artifacts') do
+    Dir.chdir('../buildpack-artifacts') do
       Dir["*.zip"].each do |buildpack|
         md5sum = `md5sum #{buildpack}`
         sha256sum = `sha256sum #{buildpack}`
