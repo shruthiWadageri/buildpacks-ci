@@ -16,7 +16,7 @@ Dir.chdir('buildpack') do
     output_uncached = File.join('..', 'buildpacks-artifacts', File.basename(uncached_buildpack))
     output_cached = File.join('..', 'buildpacks-artifacts', File.basename(cached_buildpack))
 
-    FileUtils.mv(uncached_buildpack, ouptput_uncached)
+    FileUtils.mv(uncached_buildpack, output_uncached)
     FileUtils.mv(cached_buildpack, output_cached)
   else
     `git tag #{tag_to_add}`
