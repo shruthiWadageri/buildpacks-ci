@@ -1,0 +1,26 @@
+---
+resources: ############################################################################################################
+
+- name: annas-docker-image
+  type: docker-image
+  source:
+    repository: cfbuildpacks/annas-docker-image
+    email: {{buildpacks-docker-user-email}}
+    username: {{buildpacks-docker-user-username}}
+    password: {{buildpacks-docker-user-password}}
+
+- name: dockerfile-test
+  type: git
+  source:
+    uri: https://github.com/docker-library/ruby.git
+
+jobs: #################################################################################################################
+
+- name: build-annas-docker-image
+  serial: true
+  plan:
+  - get: dockerfile-test
+  - put: annas-docker-image
+    params:
+      build: dockerfile-test/2.3/alpine
+
