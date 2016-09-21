@@ -41,7 +41,7 @@ resources:
     type: git
     source:
       uri: {{buildpacks-ci-git-uri-public}}
-      branch: {{buildpacks-ci-git-uri-public-branch}}
+      branch: gcp-bosh-lite
   - name: machete
     type: git
     source:
@@ -83,8 +83,6 @@ jobs:
     serial: true
     public: true
     plan:
-      - get: nightly-trigger
-        trigger: true
       - put: resource-pools
         params:
           claim: {{deployment-name}}
