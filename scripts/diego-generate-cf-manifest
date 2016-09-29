@@ -52,8 +52,8 @@ jobs:
 popd
 
 pushd diego-release
-  ../buildpacks-ci/scripts/swap-diego-rootfs-release.rb $(pwd) bosh-lite/deployments/diego.yml
   ./scripts/generate-bosh-lite-manifests
+  ../buildpacks-ci/scripts/swap-diego-rootfs-release.rb $(pwd) bosh-lite/deployments/diego.yml
 popd
 
 pushd deployments-buildpacks
