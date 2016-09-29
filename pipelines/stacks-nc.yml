@@ -17,20 +17,20 @@ resources:
       uri: git@github.com:pivotal-cf/stacks-nc.git
       branch: master
       private_key: {{stacks-nc-private-key}}
-#  - name: stack-s3
-#    type: s3
-#    source:
-#      bucket: {{buildpacks-binaries-s3-bucket}}
-#      regexp: cflinuxfs2_nc-(.*).tar.gz
-#      access_key_id: {{pivotal-buildpacks-s3-access-key}}
-#      secret_access_key: {{pivotal-buildpacks-s3-secret-key}}
-#  - name: receipt-s3
-#    type: s3
-#    source:
-#      bucket: {{buildpacks-binaries-s3-bucket}}
-#      regexp: cflinuxfs2_receipt-(.*)
-#      access_key_id: {{pivotal-buildpacks-s3-access-key}}
-#      secret_access_key: {{pivotal-buildpacks-s3-secret-key}}
+  - name: stack-s3
+    type: s3
+    source:
+      bucket: {{buildpacks-binaries-s3-bucket}}
+      regexp: cflinuxfs2_nc-(.*).tar.gz
+      access_key_id: {{pivotal-buildpacks-s3-access-key}}
+      secret_access_key: {{pivotal-buildpacks-s3-secret-key}}
+  - name: receipt-s3
+    type: s3
+    source:
+      bucket: {{buildpacks-binaries-s3-bucket}}
+      regexp: cflinuxfs2_receipt_nc-(.*)
+      access_key_id: {{pivotal-buildpacks-s3-access-key}}
+      secret_access_key: {{pivotal-buildpacks-s3-secret-key}}
   - name: version
     type: semver
     source:
@@ -137,7 +137,7 @@ jobs:
           DEPLOYMENT_NAME: stacks-nc.buildpacks.ci
           BOSH_PRIVATE_KEY: {{bosh_private_key}}
           BOSH_USER: {{bosh_user}}
-          BOSH_PASSWORD: {{bosstacks-nch_password}}
+          BOSH_PASSWORD: {{bosh_password}}
           AWS_ACCESS_KEY_ID: {{buildpacks_ci_aws_access_key_id}}
           AWS_SECRET_ACCESS_KEY: {{buildpacks_ci_aws_secret_access_key}}
           BOSH_AWS_ACCESS_KEY_ID: {{buildpacks_ci_aws_access_key_id}}
@@ -179,18 +179,20 @@ jobs:
         - task: test-rootfs
           file: buildpacks-ci/tasks/test-rootfs.yml
           privileged: true
-#        - put: stack-s3
-#          params:
-#            from: stacks-artifacts/cflinuxfs2-(.*).tar.gz
-#            to: /rootfs/
-#        - put: receipt-s3
-#          params:
-#            from: receipt-artifacts/cflinuxfs2_receipt-(.*)
-#            to: /rootfs/
-#        - put: version
-#          params: { file: version/number }
-#        - put: cflinuxfs2-rootfs-release-version
-#          params: { file: cflinuxfs2-rootfs-release-version/number }
+          params:
+            STACKS_SUFFIX: _nc
+        - put: stack-s3
+          params:
+            from: stacks-artifacts/cflinuxfs2-(.*).tar.gz
+            to: /rootfs-nc/
+        - put: receipt-s3
+          params:
+            from: receipt-artifacts/cflinuxfs2_receipt-(.*)
+            to: /rootfs-nc/
+        - put: version
+          params: { file: version/number }
+        - put: cflinuxfs2-rootfs-release-version
+          params: { file: cflinuxfs2-rootfs-release-version/number }
 #  - name: generate-stacks-manifests
 #    serial: true
 #    serial_groups: [ stacks ]
