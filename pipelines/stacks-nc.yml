@@ -303,7 +303,7 @@ jobs:
           params:
             manifest: deployments-buildpacks/deployments/stacks-nc.buildpacks.ci/rootfs-smoke-test.yml
             stemcells: [lite-stemcell/*.tgz]
-            releases: [cflinuxfs2-rootfs-release-artifacts/dev_releases/cflinuxfs2-rootfs/*.tgz]
+            releases: [cflinuxfs2-rootfs-release-artifacts/dev_releases/cflinuxfs2-nc-rootfs/*.tgz]
         - task: run-rootfs-smoke-test
           file: buildpacks-ci/tasks/run-rootfs-smoke-test.yml
           params:
@@ -329,41 +329,41 @@ jobs:
 #            channel: {{concourse-job-failure-notifications-slack-channel}}
 #            username: concourse
 #            icon_url: http://cl.ly/image/3e1h0H3H2s0P/concourse-logo.png
-#  - name: deploy-cf-to-stacks
-#    serial: true
-#    serial_groups: [ stacks ]
-#    public: true
-#    plan:
-#      - aggregate:
-#        - get: lite-stemcell
-#        - get: buildpacks-ci
-#        - get: deployments-buildpacks
-#          passed: [ 'deploy-rootfs-to-stacks' ]
-#        - get: cf-release
-#          resource: cf-release-rc
-#          passed: [ 'deploy-rootfs-to-stacks' ]
-#        - get: cflinuxfs2-rootfs-release
-#          passed: [ 'deploy-rootfs-to-stacks' ]
-#        - get: stack-s3
-#          passed: [ 'deploy-rootfs-to-stacks' ]
-#        - get: version
-#          passed: [ 'deploy-rootfs-to-stacks' ]
-#          trigger: true
-#        - get: cflinuxfs2-rootfs-release-version
-#          passed: [ 'deploy-rootfs-to-stacks' ]
-#        - get: receipt-s3
-#          passed: [ 'deploy-rootfs-to-stacks' ]
-#        - get: stacks
-#          passed: [ 'deploy-rootfs-to-stacks' ]
-#      - do:
-#        - task: create-cf-release
-#          file: buildpacks-ci/tasks/create-cf-release-without-modifying-stacks.yml
-#          privileged: true
-#        - put: stacks-cf-deployment
-#          params:
-#            manifest: deployments-buildpacks/deployments/stacks.buildpacks.ci/manifest.yml
-#            stemcells: [lite-stemcell/*.tgz]
-#            releases: [cf-release-artifacts/dev_releases/cf/*.tgz]
+  - name: deploy-cf-to-stacks
+    serial: true
+    serial_groups: [ stacks ]
+    public: true
+    plan:
+      - aggregate:
+        - get: lite-stemcell
+        - get: buildpacks-ci
+        - get: deployments-buildpacks
+          passed: [ 'deploy-rootfs-to-stacks' ]
+        - get: cf-release
+          resource: cf-release-rc
+          passed: [ 'deploy-rootfs-to-stacks' ]
+        - get: cflinuxfs2-rootfs-release
+          passed: [ 'deploy-rootfs-to-stacks' ]
+        - get: stack-s3
+          passed: [ 'deploy-rootfs-to-stacks' ]
+        - get: version
+          passed: [ 'deploy-rootfs-to-stacks' ]
+          trigger: true
+        - get: cflinuxfs2-rootfs-release-version
+          passed: [ 'deploy-rootfs-to-stacks' ]
+        - get: receipt-s3
+          passed: [ 'deploy-rootfs-to-stacks' ]
+        - get: stacks
+          passed: [ 'deploy-rootfs-to-stacks' ]
+      - do:
+        - task: create-cf-release
+          file: buildpacks-ci/tasks/create-cf-release-without-modifying-stacks.yml
+          privileged: true
+        - put: stacks-cf-deployment
+          params:
+            manifest: deployments-buildpacks/deployments/stacks-nc.buildpacks.ci/manifest.yml
+            stemcells: [lite-stemcell/*.tgz]
+            releases: [cf-release-artifacts/dev_releases/cf/*.tgz]
 #        on_failure:
 #          put: failure-alert
 #          params:
@@ -371,39 +371,39 @@ jobs:
 #            channel: {{concourse-job-failure-notifications-slack-channel}}
 #            username: concourse
 #            icon_url: http://cl.ly/image/3e1h0H3H2s0P/concourse-logo.png
-#  - name: deploy-diego-to-stacks
-#    serial: true
-#    serial_groups: [ stacks ]
-#    public: true
-#    plan:
-#      - aggregate:
-#        - get: lite-stemcell
-#        - get: garden-linux-bosh-release
-#        - get: diego-bosh-release
-#        - get: etcd-bosh-release
-#        - get: deployments-buildpacks
-#          passed: ['deploy-cf-to-stacks']
-#          trigger: true
-#        - get: buildpacks-ci
-#        - get: stack-s3
-#          passed: [ deploy-cf-to-stacks ]
-#        - get: version
-#          passed: [ deploy-cf-to-stacks ]
-#          trigger: true
-#        - get: cflinuxfs2-rootfs-release-version
-#          passed: [ deploy-cf-to-stacks ]
-#        - get: receipt-s3
-#          passed: [ deploy-cf-to-stacks ]
-#        - get: stacks
-#          passed: [ deploy-cf-to-stacks ]
-#      - put: stacks-diego-deployment
-#        params:
-#          manifest: deployments-buildpacks/deployments/stacks.buildpacks.ci/diego.yml
-#          stemcells: ['lite-stemcell/stemcell.tgz']
-#          releases:
-#            - diego-bosh-release/release.tgz
-#            - garden-linux-bosh-release/release.tgz
-#            - etcd-bosh-release/release.tgz
+  - name: deploy-diego-to-stacks
+    serial: true
+    serial_groups: [ stacks ]
+    public: true
+    plan:
+      - aggregate:
+        - get: lite-stemcell
+        - get: garden-linux-bosh-release
+        - get: diego-bosh-release
+        - get: etcd-bosh-release
+        - get: deployments-buildpacks
+          passed: ['deploy-cf-to-stacks']
+          trigger: true
+        - get: buildpacks-ci
+        - get: stack-s3
+          passed: [ deploy-cf-to-stacks ]
+        - get: version
+          passed: [ deploy-cf-to-stacks ]
+          trigger: true
+        - get: cflinuxfs2-rootfs-release-version
+          passed: [ deploy-cf-to-stacks ]
+        - get: receipt-s3
+          passed: [ deploy-cf-to-stacks ]
+        - get: stacks
+          passed: [ deploy-cf-to-stacks ]
+      - put: stacks-diego-deployment
+        params:
+          manifest: deployments-buildpacks/deployments/stacks-nc.buildpacks.ci/diego.yml
+          stemcells: ['lite-stemcell/stemcell.tgz']
+          releases:
+            - diego-bosh-release/release.tgz
+            - garden-linux-bosh-release/release.tgz
+            - etcd-bosh-release/release.tgz
 #        on_failure:
 #          put: failure-alert
 #          params:
@@ -446,7 +446,7 @@ jobs:
 #        - put: stack-s3
 #          params:
 #            from: stack-archive/cflinuxfs2-(.*).tar.gz
-#            to: /rootfs/
+#            to: /rootfs-nc/
 #        - put: version
 #          params: { file: version/number }
 #        - put: cflinuxfs2-rootfs-release-version
