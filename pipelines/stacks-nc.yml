@@ -126,7 +126,6 @@ jobs:
     serial: true
     serial_groups:
       - stacks
-    public: true
     plan:
       - aggregate:
         - get: deployments-buildpacks
@@ -157,7 +156,6 @@ jobs:
             rebase: true
   - name: build-rootfs
     serial: true
-    public: true
     plan:
       - aggregate:
         - get: buildpacks-ci
@@ -196,7 +194,6 @@ jobs:
   - name: generate-stacks-manifests
     serial: true
     serial_groups: [ stacks ]
-    public: true
     plan:
       - aggregate:
         - get: deployments-buildpacks
@@ -271,7 +268,6 @@ jobs:
   - name: deploy-rootfs-to-stacks
     serial: true
     serial_groups: [ stacks ]
-    public: true
     plan:
       - aggregate:
         - get: lite-stemcell
@@ -332,7 +328,6 @@ jobs:
   - name: deploy-cf-to-stacks
     serial: true
     serial_groups: [ stacks ]
-    public: true
     plan:
       - aggregate:
         - get: lite-stemcell
@@ -374,7 +369,6 @@ jobs:
   - name: deploy-diego-to-stacks
     serial: true
     serial_groups: [ stacks ]
-    public: true
     plan:
       - aggregate:
         - get: lite-stemcell
@@ -411,9 +405,35 @@ jobs:
 #            channel: {{concourse-job-failure-notifications-slack-channel}}
 #            username: concourse
 #            icon_url: http://cl.ly/image/3e1h0H3H2s0P/concourse-logo.png
+  - name: cflinuxfs2-nc-specs
+    serial: true
+    serial_groups: [ stacks ]
+    plan:
+      - aggregate:
+        - get: buildpacks-ci
+        - get: stack-s3
+          passed: [ deploy-cf-to-stacks ]
+        - get: receipt-s3
+          passed: [ deploy-cf-to-stacks ]
+        - get: cflinuxfs2-rootfs-release
+        - get: stacks
+          passed: [ deploy-cf-to-stacks ]
+        - get: version
+          passed: [ deploy-cf-to-stacks ]
+          trigger: true
+        - get: cflinuxfs2-rootfs-release-version
+          passed: [ deploy-cf-to-stacks ]
+      - do:
+        - task: run-cflinuxfs2-nc-specs
+          file: buildpacks-ci/tasks/run-cflinuxfs2-nc-specs/task.yml
+          params:
+            DEPLOYMENT_NAME: stacks.buildpacks.ci
+            CF_PASSWORD: {{ci-cf-password}}
+
+
+
 #  - name: shipit
 #    serial: true
-#    public: true
 #    plan:
 #      - aggregate:
 #        - get: buildpacks-ci
@@ -460,7 +480,6 @@ jobs:
 #            icon_url: http://cl.ly/image/3e1h0H3H2s0P/concourse-logo.png
 #  - name: reset-minor-version-to-rc
 #    serial: true
-#    public: true
 #    plan:
 #      - get: version
 #        trigger: true
@@ -476,7 +495,6 @@ jobs:
 #        params: {file: cflinuxfs2-rootfs-release-version/number}
 #  - name: create-cflinuxfs2-rootfs-release
 #    serial: true
-#    public: true
 #    plan:
 #      - aggregate:
 #        - get: buildpacks-ci
