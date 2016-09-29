@@ -29,7 +29,7 @@ Dir.chdir(diego_release_dir) do
 
     diego_manifest_contents.gsub!(to_swap, swapped)
 
-  File.write(cf_manifest_file, cf_manifest_contents)
+  File.write(diego_manifest_file, diego_manifest_contents)
 end
 
 

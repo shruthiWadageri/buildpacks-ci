@@ -3,7 +3,7 @@ require 'spec_helper.rb'
 require 'digest'
 require 'yaml'
 
-describe 'script for filling diegoe manifest with correct rootfs release' do
+describe 'script for filling diego manifest with correct rootfs release' do
   let(:diego_release_dir)       { File.join(File.dirname(__FILE__), 'diego') }
   let(:diego_manifest_file) { File.join(diego_release_dir, 'diego.yml') }
   let(:diego_tmp_manifest_file) { File.join(diego_release_dir, 'diego-tmp.yml') }
@@ -31,14 +31,14 @@ describe 'script for filling diegoe manifest with correct rootfs release' do
                                                  - name: nsync
                                                    release: cf
                                                  - name: cflinuxfs2-rootfs-setup
-                                                   release: cflinuxfs2-rootfs
+                                                   release: a_rootfs_bosh_release
                                                  - name: route_emitter
                                                    release: diego
 
                                                releases:
                                                - name: diego
                                                  version: latest
-                                               - name: cflinuxfs2-rootfs
+                                               - name: a_rootfs_bosh_release
                                                  version: latest
                                                - name: etcd
                                                  version: latest
