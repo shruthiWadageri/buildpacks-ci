@@ -53,74 +53,74 @@ resources:
       uri: {{deployments-git-uri}}
       private_key: {{deployments-private-key}}
       branch: master
-#  - name: stacks-cf-deployment
-#    type: bosh-deployment
-#    source:
-#      target: https://stacks-nc.buildpacks.ci.cf-app.com:25555
-#      username: admin
-#      password: {{bosh-lite-password}}
-#      deployment: cf-warden
-#      ignore_ssl: true
-#  - name: stacks-diego-deployment
-#    type: bosh-deployment
-#    source:
-#      target: https://stacks-nc.buildpacks.ci.cf-app.com:25555
-#      username: admin
-#      password: {{bosh-lite-password}}
-#      deployment: cf-warden-diego
-#      ignore_ssl: true
-#  - name: stacks-rootfs-deployment
-#    type: bosh-deployment
-#    source:
-#      target: https://stacks-nc.buildpacks.ci.cf-app.com:25555
-#      username: admin
-#      password: {{bosh-lite-password}}
-#      deployment: rootfs-smoke-test
-#      ignore_ssl: true
-#  - name: bosh-lite
-#    type: git
-#    source:
-#      uri: https://github.com/cloudfoundry/bosh-lite
-#  - name: cflinuxfs2-rootfs-release
-#    type: git
-#    source:
-#      uri: git@github.com:cloudfoundry/cflinuxfs2-rootfs-release.git
-#      branch: master
-#      private_key: {{cflinuxfs2-rootfs-private-key}}
-#  - name: diego-releasestacks-nc
-#    type: git
-#    source:
-#      uri: https://github.com/cloudfoundry/diego-release
-#      branch: master
-#  - name: diego-bosh-release
-#    type: bosh-io-release
-#    tarball: true
-#    source:
-#      repository: cloudfoundry/diego-release
-#  - name: etcd-bosh-release
-#    type: bosh-io-release
-#    tarball: true
-#    source:
-#      repository: cloudfoundry-incubator/etcd-release
-#  - name: garden-linux-bosh-release
-#    type: bosh-io-release
-#    tarball: true
-#    source:
-#      repository: cloudfoundry-incubator/garden-linux-release
-#  - name: cf-release-rc
-#    type: git
-#    source:
-#      uri: {{cf-release-git-uri}}
-#      branch: release-candidate
-#  - name: lite-stemcell
-#    type: bosh-io-stemcell
-#    source:
-#      name: bosh-warden-boshlite-ubuntu-trusty-go_agent
-#
-#  - name: failure-alert
-#    type: slack-notification
-#    source:
-#      url: {{concourse-job-failure-notifications-slack-webhook}}
+  - name: stacks-cf-deployment
+    type: bosh-deployment
+    source:
+      target: https://stacks-nc.buildpacks.ci.cf-app.com:25555
+      username: admin
+      password: {{bosh-lite-password}}
+      deployment: cf-warden
+      ignore_ssl: true
+  - name: stacks-diego-deployment
+    type: bosh-deployment
+    source:
+      target: https://stacks-nc.buildpacks.ci.cf-app.com:25555
+      username: admin
+      password: {{bosh-lite-password}}
+      deployment: cf-warden-diego
+      ignore_ssl: true
+  - name: stacks-rootfs-deployment
+    type: bosh-deployment
+    source:
+      target: https://stacks-nc.buildpacks.ci.cf-app.com:25555
+      username: admin
+      password: {{bosh-lite-password}}
+      deployment: rootfs-smoke-test
+      ignore_ssl: true
+  - name: bosh-lite
+    type: git
+    source:
+      uri: https://github.com/cloudfoundry/bosh-lite
+  - name: cflinuxfs2-rootfs-release
+    type: git
+    source:
+      uri: git@github.com:pivotal-cf/cflinuxfs2-nc-rootfs-release.git
+      branch: master
+      private_key: {{cflinuxfs2-nc-rootfs-private-key}}
+  - name: diego-release
+    type: git
+    source:
+      uri: https://github.com/cloudfoundry/diego-release
+      branch: master
+  - name: diego-bosh-release
+    type: bosh-io-release
+    tarball: true
+    source:
+      repository: cloudfoundry/diego-release
+  - name: etcd-bosh-release
+    type: bosh-io-release
+    tarball: true
+    source:
+      repository: cloudfoundry-incubator/etcd-release
+  - name: garden-linux-bosh-release
+    type: bosh-io-release
+    tarball: true
+    source:
+      repository: cloudfoundry-incubator/garden-linux-release
+  - name: cf-release-rc
+    type: git
+    source:
+      uri: {{cf-release-git-uri}}
+      branch: release-candidate
+  - name: lite-stemcell
+    type: bosh-io-stemcell
+    source:
+      name: bosh-warden-boshlite-ubuntu-trusty-go_agent
+
+  - name: failure-alert
+    type: slack-notification
+    source:
+      url: {{concourse-job-failure-notifications-slack-webhook}}
 jobs:
   - name: recreate-bosh-lite
     serial: true
@@ -183,142 +183,145 @@ jobs:
             STACKS_SUFFIX: _nc
         - put: stack-s3
           params:
-            from: stacks-artifacts/cflinuxfs2-(.*).tar.gz
+            from: stacks-artifacts/cflinuxfs2_nc-(.*).tar.gz
             to: /rootfs-nc/
         - put: receipt-s3
           params:
-            from: receipt-artifacts/cflinuxfs2_receipt-(.*)
+            from: receipt-artifacts/cflinuxfs2_receipt_nc-(.*)
             to: /rootfs-nc/
         - put: version
           params: { file: version/number }
         - put: cflinuxfs2-rootfs-release-version
           params: { file: cflinuxfs2-rootfs-release-version/number }
-#  - name: generate-stacks-manifests
-#    serial: true
-#    serial_groups: [ stacks ]
-#    public: true
-#    plan:
-#      - aggregate:
-#        - get: deployments-buildpacks
-#          passed: [ "build-rootfs" ]
-#        - get: bosh-lite
-#        - get: buildpacks-ci
-#        - get: cf-release
-#          resource: cf-release-rc
-#        - get: diego-release
-#        - get: cflinuxfs2-rootfs-release
-#        - get: lite-stemcell
-#        - get: stack-s3
-#          passed: [ build-rootfs ]
-#        - get: version
-#          passed: [ build-rootfs ]
-#          trigger: true
-#        - get: cflinuxfs2-rootfs-release-version
-#          passed: [ build-rootfs ]
-#        - get: receipt-s3
-#          passed: [ build-rootfs ]
-#        - get: stacks
-#          passed: [ build-rootfs ]
-#      - do:
-#        - task: generate-rootfs-smoke-test-manifest
-#          file: buildpacks-ci/tasks/make-rootfs-smoke-test-manifest.yml
-#          params:
-#            DEPLOYMENT_NAME: stacks.buildpacks.ci
-#            BOSH_PRIVATE_KEY: {{bosh_private_key}}
-#            BOSH_USER: {{bosh_user}}
-#            BOSH_PASSWORD: {{bosh_password}}
-#            AWS_ACCESS_KEY_ID: {{buildpacks_ci_aws_access_key_id}}
-#            AWS_SECRET_ACCESS_KEY: {{buildpacks_ci_aws_secret_access_key}}
-#            BOSH_AWS_ACCESS_KEY_ID: {{buildpacks_ci_aws_access_key_id}}
-#            BOSH_AWS_SECRET_ACCESS_KEY: {{buildpacks_ci_aws_secret_access_key}}
-#            BOSH_LITE_SECURITY_GROUP: {{buildpacks_ci_bosh_lite_security_group}}
-#            BOSH_LITE_SUBNET_ID: {{buildpacks_ci_bosh_lite_subnet_id}}
-#            BOSH_LITE_DISK_SIZE: 100
-#            BOSH_GATEWAY_USER: {{buildpacks_ci_bosh_gateway_user}}
-#            BOSH_TARGET: stacks.buildpacks.ci.cf-app.com
-#            BOSH_LITE_NAME: stacks.buildpacks.ci
-#          privileged: true
-#        - put: deployments-buildpacks
-#          params:
-#            repository: rootfs-smoke-test-manifest-artifacts
-#            rebase: true
-#        - task: generate-cf-and-diego-manifest
-#          file: buildpacks-ci/tasks/diego-make-manifest.yml
-#          params:
-#            DEPLOYMENT_NAME: stacks.buildpacks.ci
-#            CI_CF_PASSWORD: {{ci-cf-password}}
-#            BOSH_PRIVATE_KEY: {{bosh_private_key}}
-#            BOSH_USER: {{bosh_user}}
-#            BOSH_PASSWORD: {{bosh_password}}
-#            AWS_ACCESS_KEY_ID: {{buildpacks_ci_aws_access_key_id}}
-#            AWS_SECRET_ACCESS_KEY: {{buildpacks_ci_aws_secret_access_key}}
-#            BOSH_AWS_ACCESS_KEY_ID: {{buildpacks_ci_aws_access_key_id}}
-#            BOSH_AWS_SECRET_ACCESS_KEY: {{buildpacks_ci_aws_secret_access_key}}
-#            BOSH_LITE_SECURITY_GROUP: {{buildpacks_ci_bosh_lite_security_group}}
-#            BOSH_LITE_SUBNET_ID: {{buildpacks_ci_bosh_lite_subnet_id}}
-#            BOSH_LITE_DISK_SIZE: 100
-#            BOSH_GATEWAY_USER: {{buildpacks_ci_bosh_gateway_user}}
-#            BOSH_TARGET: stacks.buildpacks.ci.cf-app.com
-#            BOSH_LITE_NAME: stacks.buildpacks.ci
-#            RUBYGEM_MIRROR: {{rubygem-mirror}}
-#            DOMAIN_NAME: {{domain-name}}
-#          privileged: true
-#        - put: deployments-buildpacks
-#          params:
-#            repository: generate-manifest-artifacts
-#            rebase: true
-#  - name: deploy-rootfs-to-stacks
-#    serial: true
-#    serial_groups: [ stacks ]
-#    public: true
-#    plan:
-#      - aggregate:
-#        - get: lite-stemcell
-#        - get: buildpacks-ci
-#        - get: deployments-buildpacks
-#          passed: [ 'generate-stacks-manifests' ]
-#        - get: cf-release
-#          resource: cf-release-rc
-#          passed: [ 'generate-stacks-manifests' ]
-#        - get: cflinuxfs2-rootfs-release
-#          passed: [ 'generate-stacks-manifests' ]
-#        - get: stack-s3
-#          passed: [ 'generate-stacks-manifests' ]
-#        - get: version
-#          passed: [ 'generate-stacks-manifests' ]
-#          trigger: true
-#        - get: cflinuxfs2-rootfs-release-version
-#          passed: [ 'generate-stacks-manifests' ]
-#        - get: receipt-s3
-#          passed: [ 'generate-stacks-manifests' ]
-#        - get: stacks
-#          passed: [ 'generate-stacks-manifests' ]
-#      - do:
-#        - task: overwrite-cflinuxfs2-rootfs-release
-#          file: buildpacks-ci/tasks/overwrite-cflinuxfs2-rootfs-release.yml
-#        - put: stacks-rootfs-deployment
-#          params:
-#            manifest: deployments-buildpacks/deployments/stacks.buildpacks.ci/rootfs-smoke-test.yml
-#            stemcells: [lite-stemcell/*.tgz]
-#            releases: [cflinuxfs2-rootfs-release-artifacts/dev_releases/cflinuxfs2-rootfs/*.tgz]
-#        - task: run-rootfs-smoke-test
-#          file: buildpacks-ci/tasks/run-rootfs-smoke-test.yml
-#          params:
-#            DEPLOYMENT_NAME: stacks.buildpacks.ci
-#            BOSH_PRIVATE_KEY: {{bosh_private_key}}
-#            BOSH_USER: {{bosh_user}}
-#            BOSH_PASSWORD: {{bosh_password}}
-#            AWS_ACCESS_KEY_ID: {{buildpacks_ci_aws_access_key_id}}
-#            AWS_SECRET_ACCESS_KEY: {{buildpacks_ci_aws_secret_access_key}}
-#            BOSH_AWS_ACCESS_KEY_ID: {{buildpacks_ci_aws_access_key_id}}
-#            BOSH_AWS_SECRET_ACCESS_KEY: {{buildpacks_ci_aws_secret_access_key}}
-#            BOSH_LITE_SECURITY_GROUP: {{buildpacks_ci_bosh_lite_security_group}}
-#            BOSH_LITE_SUBNET_ID: {{buildpacks_ci_bosh_lite_subnet_id}}
-#            BOSH_LITE_DISK_SIZE: 100
-#            BOSH_GATEWAY_USER: {{buildpacks_ci_bosh_gateway_user}}
-#            BOSH_TARGET: stacks.buildpacks.ci.cf-app.com
-#            BOSH_LITE_NAME: stacks.buildpacks.ci
-#            RUBYGEM_MIRROR: {{rubygem-mirror}}
+  - name: generate-stacks-manifests
+    serial: true
+    serial_groups: [ stacks ]
+    public: true
+    plan:
+      - aggregate:
+        - get: deployments-buildpacks
+          passed: [ "build-rootfs" ]
+        - get: bosh-lite
+        - get: buildpacks-ci
+        - get: cf-release
+          resource: cf-release-rc
+        - get: diego-release
+        - get: cflinuxfs2-rootfs-release
+        - get: lite-stemcell
+        - get: stack-s3
+          passed: [ build-rootfs ]
+        - get: version
+          passed: [ build-rootfs ]
+          trigger: true
+        - get: cflinuxfs2-rootfs-release-version
+          passed: [ build-rootfs ]
+        - get: receipt-s3
+          passed: [ build-rootfs ]
+        - get: stacks
+          passed: [ build-rootfs ]
+      - do:
+        - task: generate-rootfs-smoke-test-manifest
+          file: buildpacks-ci/tasks/make-rootfs-smoke-test-manifest.yml
+          params:
+            DEPLOYMENT_NAME: stacks-nc.buildpacks.ci
+            BOSH_PRIVATE_KEY: {{bosh_private_key}}
+            BOSH_USER: {{bosh_user}}
+            BOSH_PASSWORD: {{bosh_password}}
+            AWS_ACCESS_KEY_ID: {{buildpacks_ci_aws_access_key_id}}
+            AWS_SECRET_ACCESS_KEY: {{buildpacks_ci_aws_secret_access_key}}
+            BOSH_AWS_ACCESS_KEY_ID: {{buildpacks_ci_aws_access_key_id}}
+            BOSH_AWS_SECRET_ACCESS_KEY: {{buildpacks_ci_aws_secret_access_key}}
+            BOSH_LITE_SECURITY_GROUP: {{buildpacks_ci_bosh_lite_security_group}}
+            BOSH_LITE_SUBNET_ID: {{buildpacks_ci_bosh_lite_subnet_id}}
+            BOSH_LITE_DISK_SIZE: 100
+            BOSH_GATEWAY_USER: {{buildpacks_ci_bosh_gateway_user}}
+            BOSH_TARGET: stacks-nc.buildpacks.ci.cf-app.com
+            BOSH_LITE_NAME: stacks-nc.buildpacks.ci
+          privileged: true
+        - put: deployments-buildpacks
+          params:
+            repository: rootfs-smoke-test-manifest-artifacts
+            rebase: true
+        - task: generate-cf-and-diego-manifest
+          file: buildpacks-ci/tasks/diego-make-manifest.yml
+          params:
+            DEPLOYMENT_NAME: stacks-nc.buildpacks.ci
+            CI_CF_PASSWORD: {{ci-cf-password}}
+            BOSH_PRIVATE_KEY: {{bosh_private_key}}
+            BOSH_USER: {{bosh_user}}
+            BOSH_PASSWORD: {{bosh_password}}
+            AWS_ACCESS_KEY_ID: {{buildpacks_ci_aws_access_key_id}}
+            AWS_SECRET_ACCESS_KEY: {{buildpacks_ci_aws_secret_access_key}}
+            BOSH_AWS_ACCESS_KEY_ID: {{buildpacks_ci_aws_access_key_id}}
+            BOSH_AWS_SECRET_ACCESS_KEY: {{buildpacks_ci_aws_secret_access_key}}
+            BOSH_LITE_SECURITY_GROUP: {{buildpacks_ci_bosh_lite_security_group}}
+            BOSH_LITE_SUBNET_ID: {{buildpacks_ci_bosh_lite_subnet_id}}
+            BOSH_LITE_DISK_SIZE: 100
+            BOSH_GATEWAY_USER: {{buildpacks_ci_bosh_gateway_user}}
+            BOSH_TARGET: stacks-nc.buildpacks.ci.cf-app.com
+            BOSH_LITE_NAME: stacks-nc.buildpacks.ci
+            RUBYGEM_MIRROR: {{rubygem-mirror}}
+            DOMAIN_NAME: {{domain-name}}
+            ROOTFS_RELEASE: cflinuxfs2-nc-rootfs
+          privileged: true
+        - put: deployments-buildpacks
+          params:
+            repository: generate-manifest-artifacts
+            rebase: true
+  - name: deploy-rootfs-to-stacks
+    serial: true
+    serial_groups: [ stacks ]
+    public: true
+    plan:
+      - aggregate:
+        - get: lite-stemcell
+        - get: buildpacks-ci
+        - get: deployments-buildpacks
+          passed: [ 'generate-stacks-manifests' ]
+        - get: cf-release
+          resource: cf-release-rc
+          passed: [ 'generate-stacks-manifests' ]
+        - get: cflinuxfs2-rootfs-release
+          passed: [ 'generate-stacks-manifests' ]
+        - get: stack-s3
+          passed: [ 'generate-stacks-manifests' ]
+        - get: version
+          passed: [ 'generate-stacks-manifests' ]
+          trigger: true
+        - get: cflinuxfs2-rootfs-release-version
+          passed: [ 'generate-stacks-manifests' ]
+        - get: receipt-s3
+          passed: [ 'generate-stacks-manifests' ]
+        - get: stacks
+          passed: [ 'generate-stacks-manifests' ]
+      - do:
+        - task: overwrite-cflinuxfs2-rootfs-release
+          file: buildpacks-ci/tasks/overwrite-cflinuxfs2-rootfs-release.yml
+          params:
+            ROOTFS_RELEASE: cflinuxfs2-nc-rootfs
+        - put: stacks-rootfs-deployment
+          params:
+            manifest: deployments-buildpacks/deployments/stacks-nc.buildpacks.ci/rootfs-smoke-test.yml
+            stemcells: [lite-stemcell/*.tgz]
+            releases: [cflinuxfs2-rootfs-release-artifacts/dev_releases/cflinuxfs2-rootfs/*.tgz]
+        - task: run-rootfs-smoke-test
+          file: buildpacks-ci/tasks/run-rootfs-smoke-test.yml
+          params:
+            DEPLOYMENT_NAME: stacks.buildpacks.ci
+            BOSH_PRIVATE_KEY: {{bosh_private_key}}
+            BOSH_USER: {{bosh_user}}
+            BOSH_PASSWORD: {{bosh_password}}
+            AWS_ACCESS_KEY_ID: {{buildpacks_ci_aws_access_key_id}}
+            AWS_SECRET_ACCESS_KEY: {{buildpacks_ci_aws_secret_access_key}}
+            BOSH_AWS_ACCESS_KEY_ID: {{buildpacks_ci_aws_access_key_id}}
+            BOSH_AWS_SECRET_ACCESS_KEY: {{buildpacks_ci_aws_secret_access_key}}
+            BOSH_LITE_SECURITY_GROUP: {{buildpacks_ci_bosh_lite_security_group}}
+            BOSH_LITE_SUBNET_ID: {{buildpacks_ci_bosh_lite_subnet_id}}
+            BOSH_LITE_DISK_SIZE: 100
+            BOSH_GATEWAY_USER: {{buildpacks_ci_bosh_gateway_user}}
+            BOSH_TARGET: stacks.buildpacks.ci.cf-app.com
+            BOSH_LITE_NAME: stacks.buildpacks.ci
+            RUBYGEM_MIRROR: {{rubygem-mirror}}
 #        on_failure:
 #          put: failure-alert
 #          params:
