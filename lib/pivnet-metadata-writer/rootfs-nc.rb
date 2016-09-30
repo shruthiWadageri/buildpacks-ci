@@ -20,8 +20,9 @@ class PivnetMetadataWriter::RootfsNC < PivnetMetadataWriter
     metadata_release['release_type'] = 'Beta Release'
     metadata_release['eula_slug'] = 'pivotal_beta_eula'
     metadata_release['availability'] = 'Selected User Groups Only'
+    metadata_release['user_group_ids'] = ['6']
 
-
+    metadata['release'] = metadata_release
 
     metadata_files = []
     stack = { 'file' => "stack-s3/rootfs-nc/cflinuxfs2_nc-#{stack_version}.tar.gz",
@@ -44,5 +45,4 @@ class PivnetMetadataWriter::RootfsNC < PivnetMetadataWriter
     File.write(metadata_yml, metadata.to_yaml)
   end
 end
-
 

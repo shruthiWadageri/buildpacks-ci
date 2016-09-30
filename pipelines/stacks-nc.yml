@@ -4,8 +4,22 @@ resource_types:
     type: docker-image
     source:
       repository: cfcommunity/slack-notification-resource
+  - name: pivnet
+    type: docker-image
+    source:
+      repository: pivotalcf/pivnet-resource
+      tag: latest-final
 
 resources:
+  - name: pivnet-integration
+    type: pivnet
+    source:
+      endpoint: https://pivnet-integration.cfapps.io
+      bucket: pivotalnetwork-staging
+      api_token: {{pivnet-apikey}}
+      product_slug: who-knows
+      access_key_id: {{pivnet-access-key}}
+      secret_access_key: {{pivnet-secret-key}}
   - name: buildpacks-ci
     type: git
     source:
@@ -54,6 +68,13 @@ resources:
       key: versions/cflinuxfs2-rootfs-nc-release
       access_key_id: {{pivotal-buildpacks-s3-access-key}}
       secret_access_key: {{pivotal-buildpacks-s3-secret-key}}
+  - name: cflinuxfs2-rootfs-github-release
+    type: github-release
+    source:
+      drafts: false
+      user: {{buildpacks-github-org}}
+      repository: cflinuxfs2-nc-rootfs-release
+      access_token: {{buildpacks-github-token}}
   - name: deployments-buildpacks
     type: git
     source:
@@ -540,21 +561,19 @@ jobs:
           params:
             from: release-artifacts/releases/cflinuxfs2-nc-rootfs/cflinuxfs2-nc-rootfs-(.*).tgz
             to: /cflinuxfs2-nc/
-#        - task: create-release-body
-#          file: buildpacks-ci/tasks/create-rootfs-bosh-release-github-release-notes/task.yml
-#          params:
-#            ROOTFS_TYPE: nc
-#        - task: create-release-commit
-#          file: buildpacks-ci/tasks/create-rootfs-bosh-release-commit/task.yml
-#        - put: cflinuxfs2-rootfs-github-release
-#          params:
-#            name: cflinuxfs2-rootfs-release-version/number
-#            tag: cflinuxfs2-rootfs-release-version/number
-#            tag_prefix: 'v'
-#            commitish: release-commit/sha
-#            body: release-body/body
-#            globs:
-#              - release-artifacts/releases/cflinuxfs2-rootfs/*.tgz
+        - task: create-release-body
+          file: buildpacks-ci/tasks/create-rootfs-bosh-release-github-release-notes/task.yml
+          params:
+            ROOTFS_TYPE: nc
+        - task: create-release-commit
+          file: buildpacks-ci/tasks/create-rootfs-bosh-release-commit/task.yml
+        - put: cflinuxfs2-rootfs-github-release
+          params:
+            name: cflinuxfs2-rootfs-release-version/number
+            tag: cflinuxfs2-rootfs-release-version/number
+            tag_prefix: 'v'
+            commitish: release-commit/sha
+            body: release-body/body
 #        on_failure:
 #          put: failure-alert
 #          params:
@@ -585,6 +604,23 @@ jobs:
             repository: pivnet-metadata-artifacts
             rebase: true
 
+  - name: release-to-pivnet
+    serial: true
+    plan:
+      - aggregate:
+        - get: buildpacks-ci
+        - get: stack-s3
+          passed: [ write-pivnet-metadata ]
+        - get: bosh-release-s3
+          passed: [ write-pivnet-metadata ]
+        - get: rootfs-pivnet-metadata
+          passed: [ write-pivnet-metadata ]
+          trigger: true
+        - put: pivnet-integration
+          params:
+            file_glob: *s3/*nc/cflinuxfs2*gz
+            s3_filepath_prefix: PCF-Buildpacks
+            metadata_file: rootfs-pivnet-metadata/pivnet-metadata/rootfs-nc.yml
 
 
 
