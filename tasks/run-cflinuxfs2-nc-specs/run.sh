@@ -1,4 +1,4 @@
-#/bin/bash -l
+#!/bin/bash -l
 set -e
 
 DOMAIN_NAME="${DOMAIN_NAME:-cf-app.com}"
