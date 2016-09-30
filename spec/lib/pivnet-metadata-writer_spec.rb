@@ -10,6 +10,7 @@ describe PivnetMetadataWriter do
   let(:root_dir)                  { Dir.mktmpdir }
   let(:metadata_dir)              { File.join(root_dir, 'pivnet-metadata') }
   let(:yaml_path)                 { File.join(metadata_dir, "#{yaml_name}.yml") }
+  let(:yaml_contents)             { YAML.load_file(yaml_path) }
 
   before(:each) do
     FileUtils.mkdir_p(metadata_dir)
@@ -23,7 +24,6 @@ describe PivnetMetadataWriter do
     let(:yaml_name)                 { 'dotnet-core' }
     let(:buildpack_dir)             { File.join(root_dir, 'buildpack-master') }
     let(:cached_buildpack_filename) { 'dotnet-core_buildpack-cached-v1.0.0+1472744399.zip' }
-    let(:yaml_contents)             { YAML.load_file(yaml_path) }
     let(:version)                   { "1.0.0" }
 
     before do
@@ -76,17 +76,33 @@ describe PivnetMetadataWriter do
   end
 
   context 'the product is compilerless rootfs' do
-    let(:yaml_name)                 { 'rootfs-nc' }
+    let(:yaml_name)                   { 'rootfs-nc' }
+    let(:stack_version)               { '4.43'}
+    let(:release_version)             { '7.2.1'}
 
-    subject { described_class.create('RootfsNC', metadata_dir) }
+    subject { described_class.create('RootfsNC', metadata_dir, stack_version, release_version) }
 
     describe '#run!' do
       it "writes a yaml file" do
         subject.run!
         expect(File.exist? yaml_path).to be_truthy
       end
+
+      it 'writes the product files metadata to the file' do
+        subject.run!
+        product_files = yaml_contents['product_files']
+        expect(product_files.count).to eq 2
+
+        stack = product_files.first
+        expect(stack['file']).to eq 'stack-s3/rootfs-nc/cflinuxfs2_nc-4.43.tar.gz'
+        expect(stack['upload_as']).to eq 'Compilerless RootFS'
+        expect(stack['description']).to eq 'Compilerless RootFS for PCF'
+
+        release = product_files.last
+        expect(release['file']).to eq 'bosh-release-s3/cflinuxfs2-nc/cflinuxfs2-nc-rootfs-7.2.1.tgz'
+        expect(release['upload_as']).to eq 'BOSH release of Compilerless RootFS'
+        expect(release['description']).to eq 'BOSH release of Compilerless RootFS for PCF'
+      end
     end
   end
-
-
 end

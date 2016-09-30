@@ -538,7 +538,7 @@ jobs:
             repository: release-artifacts
         - put: bosh-release-s3
           params:
-            from: release-artifacts/releases/cflinuxfs2-nc-rootfs/*.tgz
+            from: release-artifacts/releases/cflinuxfs2-nc-rootfs/cflinuxfs2-nc-rootfs-(.*).tgz
             to: /cflinuxfs2-nc/
 #        - task: create-release-body
 #          file: buildpacks-ci/tasks/create-rootfs-bosh-release-github-release-notes/task.yml
