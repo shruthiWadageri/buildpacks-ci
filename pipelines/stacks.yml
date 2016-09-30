@@ -556,9 +556,9 @@ jobs:
           params: { bump: final }
       - do:
         - task: update-receipt
-          file: buildpacks-ci/tasks/update-rootfs-receipt.yml
+          file: buildpacks-ci/tasks/update-rootfs-receipt/task.yml
         - task: update-filename
-          file: buildpacks-ci/tasks/update-rootfs-filename.yml
+          file: buildpacks-ci/tasks/update-rootfs-filename/task.yml
         - put: stacks
           params:
             repository: new-stack-commit
@@ -714,9 +714,9 @@ jobs:
           params:
             repository: release-artifacts
         - task: create-release-body
-          file: buildpacks-ci/tasks/create-rootfs-bosh-release-github-release-notes.yml
+          file: buildpacks-ci/tasks/create-rootfs-bosh-release-github-release-notes/task.yml
         - task: create-release-commit
-          file: buildpacks-ci/tasks/create-rootfs-bosh-release-commit.yml
+          file: buildpacks-ci/tasks/create-rootfs-bosh-release-commit/task.yml
         - put: cflinuxfs2-rootfs-github-release
           params:
             name: cflinuxfs2-rootfs-release-version/number
