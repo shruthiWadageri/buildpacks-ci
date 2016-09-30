@@ -432,45 +432,44 @@ jobs:
 
 
 
-#  - name: shipit
-#    serial: true
-#    plan:
-#      - aggregate:
-#        - get: buildpacks-ci
-#        - get: stack-s3
-#          passed:
-#            - cats
-#        - get: receipt-s3
-#          passed:
-#            - cats
-#        - get: stacks
-#          resource: stacks
-#          passed:
-#            - cats
-#        - get: version
-#          passed:
-#            - cats
-#          params: { bump: final }
-#        - get: cflinuxfs2-rootfs-release-version
-#          passed: [ cats ]
-#          params: { bump: final }
-#      - do:
-#        - task: update-receipt
-#          file: buildpacks-ci/tasks/update-rootfs-receipt.yml
-#        - task: update-filename
-#          file: buildpacks-ci/tasks/update-rootfs-filename.yml
-#        - put: stacks
-#          params:
-#            repository: new-stack-commit
-#            tag: version/number
-#        - put: stack-s3
-#          params:
-#            from: stack-archive/cflinuxfs2-(.*).tar.gz
-#            to: /rootfs-nc/
-#        - put: version
-#          params: { file: version/number }
-#        - put: cflinuxfs2-rootfs-release-version
-#          params: { file: cflinuxfs2-rootfs-release-version/number }
+  - name: shipit
+    serial: true
+    plan:
+      - aggregate:
+        - get: buildpacks-ci
+        - get: stack-s3
+          passed: [ cflinuxfs2-nc-specs ]
+        - get: receipt-s3
+          passed: [ cflinuxfs2-nc-specs ]
+        - get: stacks
+          resource: stacks
+          passed: [ cflinuxfs2-nc-specs ]
+        - get: version
+          passed: [ cflinuxfs2-nc-specs ]
+          params: { bump: final }
+        - get: cflinuxfs2-rootfs-release-version
+          passed: [ cflinuxfs2-nc-specs ]
+          params: { bump: final }
+      - do:
+        - task: update-receipt
+          file: buildpacks-ci/tasks/update-rootfs-receipt/task.yml
+          params:
+            ROOTFS_SUFFIX: _nc
+        - task: update-filename
+          file: buildpacks-ci/tasks/update-rootfs-filename/task.yml
+            ROOTFS_SUFFIX: _nc
+        - put: stacks
+          params:
+            repository: new-stack-commit
+            tag: version/number
+        - put: stack-s3
+          params:
+            from: stack-archive/cflinuxfs2-(.*).tar.gz
+            to: /rootfs-nc/
+        - put: version
+          params: { file: version/number }
+        - put: cflinuxfs2-rootfs-release-version
+          params: { file: cflinuxfs2-rootfs-release-version/number }
 #        on_failure:
 #          put: failure-alert
 #          params:

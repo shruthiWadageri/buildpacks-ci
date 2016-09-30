@@ -10,7 +10,4 @@ inputs:
 outputs:
   - name: stack-archive
 run:
-  path: bash
-  args:
-    - -c
-    - "mv stack-s3/cflinuxfs2-*.tar.gz stack-archive/cflinuxfs2-`cat version/number`.tar.gz"
+  path: buildpacks-ci/tasks/update-rootfs-filename/run.sh
