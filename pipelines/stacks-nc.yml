@@ -481,7 +481,7 @@ jobs:
             tag: version/number
         - put: stack-s3
           params:
-            from: stack-archive/cflinuxfs2-(.*).tar.gz
+            from: stack-archive/cflinuxfs2_nc-(.*).tar.gz
             to: /rootfs-nc/
         - put: version
           params: { file: version/number }
