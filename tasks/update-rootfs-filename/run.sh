@@ -1,6 +1,6 @@
-#!/bin/bash
+#!/bin/bash -l
 
-set -el
+set -eu
 
 SUFFIX="${ROOTFS_SUFFIX-}"
 
