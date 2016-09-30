@@ -303,7 +303,7 @@ jobs:
         - task: run-rootfs-smoke-test
           file: buildpacks-ci/tasks/run-rootfs-smoke-test.yml
           params:
-            DEPLOYMENT_NAME: stacks.buildpacks.ci
+            DEPLOYMENT_NAME: stacks-nc.buildpacks.ci
             BOSH_PRIVATE_KEY: {{bosh_private_key}}
             BOSH_USER: {{bosh_user}}
             BOSH_PASSWORD: {{bosh_password}}
@@ -315,8 +315,8 @@ jobs:
             BOSH_LITE_SUBNET_ID: {{buildpacks_ci_bosh_lite_subnet_id}}
             BOSH_LITE_DISK_SIZE: 100
             BOSH_GATEWAY_USER: {{buildpacks_ci_bosh_gateway_user}}
-            BOSH_TARGET: stacks.buildpacks.ci.cf-app.com
-            BOSH_LITE_NAME: stacks.buildpacks.ci
+            BOSH_TARGET: stacks-nc.buildpacks.ci.cf-app.com
+            BOSH_LITE_NAME: stacks-nc.buildpacks.ci
             RUBYGEM_MIRROR: {{rubygem-mirror}}
 #        on_failure:
 #          put: failure-alert
@@ -412,22 +412,22 @@ jobs:
       - aggregate:
         - get: buildpacks-ci
         - get: stack-s3
-          passed: [ deploy-cf-to-stacks ]
+          passed: [ deploy-diego-to-stacks ]
         - get: receipt-s3
-          passed: [ deploy-cf-to-stacks ]
+          passed: [ deploy-diego-to-stacks ]
         - get: cflinuxfs2-rootfs-release
         - get: stacks
-          passed: [ deploy-cf-to-stacks ]
+          passed: [ deploy-diego-to-stacks ]
         - get: version
-          passed: [ deploy-cf-to-stacks ]
+          passed: [ deploy-diego-to-stacks ]
           trigger: true
         - get: cflinuxfs2-rootfs-release-version
-          passed: [ deploy-cf-to-stacks ]
+          passed: [ deploy-diego-to-stacks ]
       - do:
         - task: run-cflinuxfs2-nc-specs
           file: buildpacks-ci/tasks/run-cflinuxfs2-nc-specs/task.yml
           params:
-            DEPLOYMENT_NAME: stacks.buildpacks.ci
+            DEPLOYMENT_NAME: stacks-nc.buildpacks.ci
             CF_PASSWORD: {{ci-cf-password}}
 
 
@@ -457,6 +457,7 @@ jobs:
             ROOTFS_SUFFIX: _nc
         - task: update-filename
           file: buildpacks-ci/tasks/update-rootfs-filename/task.yml
+          params:
             ROOTFS_SUFFIX: _nc
         - put: stacks
           params:

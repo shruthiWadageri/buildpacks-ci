@@ -6,8 +6,7 @@ image_resource:
     repository: cfbuildpacks/ci
 inputs:
   - name: buildpacks-ci
-  - name: buildpack
-  - name: cf-environments
+  - name: cflinuxfs2-rootfs-release
 run:
   path: buildpacks-ci/tasks/run-cflinuxfs2-nc-specs/run.sh
 params:
