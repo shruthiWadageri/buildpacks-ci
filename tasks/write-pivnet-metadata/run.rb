@@ -2,7 +2,7 @@
 
 root_dir      = Dir.pwd
 
-require_relative 'pivnet-metadata-writer'
+require_relative "#{root_dir}/buildpacks-ci/lib/pivnet-metadata-writer"
 require_relative "#{root_dir}/buildpacks-ci/lib/git-client"
 
 metadata_dir  = File.join(root_dir, 'pivnet-dotnet-core-metadata', 'pivnet-metadata')
@@ -21,7 +21,7 @@ if buildpack_files.count != 1
 else
   cached_buildpack_filename = buildpack_files.first
 
-  writer = PivnetMetadataWriter.new(metadata_dir, buildpack_dir, cached_buildpack_filename)
+  writer = PivnetMetadataWriter.create('DotNetCore', metadata_dir, buildpack_dir, cached_buildpack_filename)
   writer.run!
 
   Dir.chdir(metadata_dir) do

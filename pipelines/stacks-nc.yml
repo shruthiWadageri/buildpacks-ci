@@ -31,6 +31,13 @@ resources:
       regexp: cflinuxfs2_receipt_nc-(.*)
       access_key_id: {{pivotal-buildpacks-s3-access-key}}
       secret_access_key: {{pivotal-buildpacks-s3-secret-key}}
+  - name: bosh-release-s3
+    type: s3
+    source:
+      bucket: {{buildpacks-binaries-s3-bucket}}
+      regexp: cflinuxfs2-nc-rootfs-(.*).tgz
+      access_key_id: {{pivotal-buildpacks-s3-access-key}}
+      secret_access_key: {{pivotal-buildpacks-s3-secret-key}}
   - name: version
     type: semver
     source:
@@ -121,6 +128,15 @@ resources:
     type: slack-notification
     source:
       url: {{concourse-job-failure-notifications-slack-webhook}}
+  - name: rootfs-pivnet-metadata
+    type: git
+    source:
+      branch: master
+      private_key: {{pivotal-cf-buildpacks-ci-robots}}
+      uri: git@github.com:pivotal-cf/buildpacks-ci-robots.git
+      paths: [ pivnet-metadata/rootfs-nc.yml ]
+
+
 jobs:
   - name: recreate-bosh-lite
     serial: true
@@ -493,37 +509,43 @@ jobs:
 #        params: {file: version/number}
 #      - put: cflinuxfs2-rootfs-release-version
 #        params: {file: cflinuxfs2-rootfs-release-version/number}
-#  - name: create-cflinuxfs2-rootfs-release
-#    serial: true
-#    plan:
-#      - aggregate:
-#        - get: buildpacks-ci
-#        - get: blob
-#          resource: stack-s3
-#          passed: [ shipit ]
-#          trigger: true
-#        - get: version
-#          passed: [ shipit ]
-#        - get: cflinuxfs2-rootfs-release-version
-#          passed: [ shipit ]
-#        - get: cflinuxfs2-rootfs-release
-#      - do:
-#        - task: create-cflinuxfs2-rootfs-release
-#          file: buildpacks-ci/tasks/create-cflinuxfs2-rootfs-release.yml
-#          params:
-#            BLOB_NAME: rootfs
-#            BLOB_GLOB: blob/cflinuxfs2-*.tar.gz
-#            RELEASE_NAME: cflinuxfs2-rootfs
-#            RELEASE_DIR: cflinuxfs2-rootfs-release
-#            ACCESS_KEY_ID: {{cloudfoundry-s3-access-key}}
-#            SECRET_ACCESS_KEY: {{cloudfoundry-s3-secret-key}}
-#        - put: cflinuxfs2-rootfs-release
-#          params:
-#            repository: release-artifacts
+  - name: create-cflinuxfs2-rootfs-release
+    serial: true
+    plan:
+      - aggregate:
+        - get: buildpacks-ci
+        - get: blob
+          resource: stack-s3
+          passed: [ shipit ]
+          trigger: true
+        - get: version
+          passed: [ shipit ]
+        - get: cflinuxfs2-rootfs-release-version
+          passed: [ shipit ]
+        - get: cflinuxfs2-rootfs-release
+      - do:
+        - task: create-cflinuxfs2-rootfs-release
+          file: buildpacks-ci/tasks/create-cflinuxfs2-rootfs-release.yml
+          params:
+            BLOB_NAME: rootfs-nc
+            BLOB_GLOB: blob/cflinuxfs2_nc-*.tar.gz
+            RELEASE_NAME: cflinuxfs2-nc-rootfs
+            RELEASE_DIR: cflinuxfs2-rootfs-release
+            ACCESS_KEY_ID: {{cloudfoundry-s3-access-key}}
+            SECRET_ACCESS_KEY: {{cloudfoundry-s3-secret-key}}
+        - put: cflinuxfs2-rootfs-release
+          params:
+            repository: release-artifacts
+        - put: bosh-release-s3
+          params:
+            from: release-artifacts/releases/cflinuxfs2-nc-rootfs/*.tgz
+            to: /cflinuxfs2-nc/
 #        - task: create-release-body
-#          file: buildpacks-ci/tasks/create-rootfs-bosh-release-github-release-notes.yml
+#          file: buildpacks-ci/tasks/create-rootfs-bosh-release-github-release-notes/task.yml
+#          params:
+#            ROOTFS_TYPE: nc
 #        - task: create-release-commit
-#          file: buildpacks-ci/tasks/create-rootfs-bosh-release-commit.yml
+#          file: buildpacks-ci/tasks/create-rootfs-bosh-release-commit/task.yml
 #        - put: cflinuxfs2-rootfs-github-release
 #          params:
 #            name: cflinuxfs2-rootfs-release-version/number
@@ -540,3 +562,30 @@ jobs:
 #            channel: {{concourse-job-failure-notifications-slack-channel}}
 #            username: concourse
 #            icon_url: http://cl.ly/image/3e1h0H3H2s0P/concourse-logo.png
+  - name: write-pivnet-metadata
+    serial: true
+    plan:
+      - aggregate:
+        - get: buildpacks-ci
+        - get: stack-s3
+          passed: [ create-cflinuxfs2-rootfs-release ]
+          trigger: true
+        - get: version
+          passed: [ create-cflinuxfs2-rootfs-release ]
+        - get: cflinuxfs2-rootfs-release-version
+          passed: [ create-cflinuxfs2-rootfs-release ]
+        - get: bosh-release-s3
+          passed: [ create-cflinuxfs2-rootfs-release ]
+        - get: rootfs-pivnet-metadata
+      - do:
+        - task: write-cflinuxfs2-release-pivnet-metadata
+          file: buildpacks-ci/tasks/write-cflinuxfs2-release-pivnet-metadata/task.yml
+        - put: rootfs-pivnet-metadata
+          params:
+            repository: pivnet-metadata-artifacts
+            rebase: true
+
+
+
+
+
