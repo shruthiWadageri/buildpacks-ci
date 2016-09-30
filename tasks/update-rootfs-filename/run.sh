@@ -1,4 +1,6 @@
-set -e
+#!/bin/bash
+
+set -el
 
 SUFFIX="${ROOTFS_SUFFIX-}"
 
