@@ -15,9 +15,9 @@ resources:
     type: pivnet
     source:
       endpoint: https://pivnet-integration.cfapps.io
-      bucket: pivotalnetwork-staging
+      bucket: pivotal-network-staging
       api_token: {{pivnet-apikey}}
-      product_slug: who-knows
+      product_slug: rootfs
       access_key_id: {{pivnet-access-key}}
       secret_access_key: {{pivnet-secret-key}}
   - name: buildpacks-ci
@@ -616,11 +616,11 @@ jobs:
         - get: rootfs-pivnet-metadata
           passed: [ write-pivnet-metadata ]
           trigger: true
-        - put: pivnet-integration
-          params:
-            file_glob: *s3/*nc/cflinuxfs2*gz
-            s3_filepath_prefix: PCF-Buildpacks
-            metadata_file: rootfs-pivnet-metadata/pivnet-metadata/rootfs-nc.yml
+      - put: pivnet-integration
+        params:
+          file_glob: '*s3/cflinuxfs2*gz'
+          s3_filepath_prefix: Pivotal-RootFS
+          metadata_file: rootfs-pivnet-metadata/pivnet-metadata/rootfs-nc.yml
 
 
 
