@@ -68,13 +68,6 @@ resources:
       key: versions/cflinuxfs2-rootfs-nc-release
       access_key_id: {{pivotal-buildpacks-s3-access-key}}
       secret_access_key: {{pivotal-buildpacks-s3-secret-key}}
-  - name: cflinuxfs2-rootfs-github-release
-    type: github-release
-    source:
-      drafts: false
-      user: {{buildpacks-github-org}}
-      repository: cflinuxfs2-nc-rootfs-release
-      access_token: {{buildpacks-github-token}}
   - name: deployments-buildpacks
     type: git
     source:
@@ -561,19 +554,6 @@ jobs:
           params:
             from: release-artifacts/releases/cflinuxfs2-nc-rootfs/cflinuxfs2-nc-rootfs-(.*).tgz
             to: /cflinuxfs2-nc/
-        - task: create-release-body
-          file: buildpacks-ci/tasks/create-rootfs-bosh-release-github-release-notes/task.yml
-          params:
-            ROOTFS_TYPE: nc
-        - task: create-release-commit
-          file: buildpacks-ci/tasks/create-rootfs-bosh-release-commit/task.yml
-        - put: cflinuxfs2-rootfs-github-release
-          params:
-            name: cflinuxfs2-rootfs-release-version/number
-            tag: cflinuxfs2-rootfs-release-version/number
-            tag_prefix: 'v'
-            commitish: release-commit/sha
-            body: release-body/body
 #        on_failure:
 #          put: failure-alert
 #          params:
