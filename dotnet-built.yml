@@ -1,2 +1,5 @@
 ---
-dotnet: []
+dotnet:
+- version: v1.0.0-preview2.0.1
+  git-commit-sha: 635cf40e58ede8a53e8b9555e19a6e1ccd6f9fbe
+  timestamp: 2016-10-06 13:24:12 UTC
