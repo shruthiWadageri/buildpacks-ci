@@ -316,10 +316,10 @@ jobs: ##########################################################################
             BOSH_PRIVATE_KEY: {{bosh_private_key}}
             BOSH_USER: {{bosh_user}}
             BOSH_PASSWORD: {{bosh_password}}
-            AWS_ACCESS_KEY_ID: {{buildpacks_ci_aws_access_key_id}}
-            AWS_SECRET_ACCESS_KEY: {{buildpacks_ci_aws_secret_access_key}}
-            BOSH_AWS_ACCESS_KEY_ID: {{buildpacks_ci_aws_access_key_id}}
-            BOSH_AWS_SECRET_ACCESS_KEY: {{buildpacks_ci_aws_secret_access_key}}
+#            AWS_ACCESS_KEY_ID: {{buildpacks_ci_aws_access_key_id}}
+#            AWS_SECRET_ACCESS_KEY: {{buildpacks_ci_aws_secret_access_key}}
+#            BOSH_AWS_ACCESS_KEY_ID: {{buildpacks_ci_aws_access_key_id}}
+#            BOSH_AWS_SECRET_ACCESS_KEY: {{buildpacks_ci_aws_secret_access_key}}
             BOSH_LITE_SECURITY_GROUP: {{buildpacks_ci_bosh_lite_security_group}}
             BOSH_LITE_SUBNET_ID: {{buildpacks_ci_bosh_lite_subnet_id}}
             BOSH_LITE_DISK_SIZE: 100
@@ -377,10 +377,10 @@ jobs: ##########################################################################
             BOSH_PRIVATE_KEY: {{bosh_private_key}}
             BOSH_USER: {{bosh_user}}
             BOSH_PASSWORD: {{bosh_password}}
-            AWS_ACCESS_KEY_ID: {{buildpacks_ci_aws_access_key_id}}
-            AWS_SECRET_ACCESS_KEY: {{buildpacks_ci_aws_secret_access_key}}
-            BOSH_AWS_ACCESS_KEY_ID: {{buildpacks_ci_aws_access_key_id}}
-            BOSH_AWS_SECRET_ACCESS_KEY: {{buildpacks_ci_aws_secret_access_key}}
+            AWS_ACCESS_KEY_ID: {{pivotal-buildpacks-s3-access-key}}
+            AWS_SECRET_ACCESS_KEY: {{pivotal-buildpacks-s3-secret-key}}
+            BOSH_AWS_ACCESS_KEY_ID: {{pivotal-buildpacks-s3-access-key}}
+            BOSH_AWS_SECRET_ACCESS_KEY: {{pivotal-buildpacks-s3-secret-key}}
             BOSH_LITE_SECURITY_GROUP: {{buildpacks_ci_bosh_lite_security_group}}
             BOSH_LITE_SUBNET_ID: {{buildpacks_ci_bosh_lite_subnet_id}}
             BOSH_LITE_DISK_SIZE: 100
@@ -587,8 +587,8 @@ jobs: ##########################################################################
             BLOB_GLOB: blob/cflinuxfs2_nc-*.tar.gz
             RELEASE_NAME: cflinuxfs2-nc-rootfs
             RELEASE_DIR: cflinuxfs2-rootfs-release
-            ACCESS_KEY_ID: {{cloudfoundry-s3-access-key}}
-            SECRET_ACCESS_KEY: {{cloudfoundry-s3-secret-key}}
+            ACCESS_KEY_ID: {{pivotal-buildpacks-s3-access-key}}
+            SECRET_ACCESS_KEY: {{pivotal-buildpacks-s3-secret-key}}
         - put: cflinuxfs2-rootfs-release
           params:
             repository: release-artifacts
